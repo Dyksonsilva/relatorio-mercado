@@ -93,10 +93,10 @@ def gr_focus():
 
 
 def gr_ptax():
-    qry = f'SELECT * FROM dw_focus WHERE data > %(data)s;'
+    qry = f'SELECT * FROM dw_ptax WHERE data > %(data)s;'
     df = pd.read_sql_query(qry, con=db, params={'data': '2017-01-01'})
 
-    fig = px.line(df.sort_values(by='data'), x='data', y='valor', **gr_styles)
+    fig = px.line(df, x='data', y='valor', **gr_styles)
     fig.update_layout(showlegend=False,
                       xaxis_title='Data',
                       yaxis_title='Cotação (R$/1 US$)',
