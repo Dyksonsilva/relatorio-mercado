@@ -17,6 +17,12 @@ import xmltodict
 # load API keys
 api_quandl = os.getenv('api_quandl')
 
+# fix column names
+def fixnames(col_names):
+    out = [item.lower() for item in col_names]
+    out = [item.replace(' ','_') for item in out]
+    out = [re.sub('[$\/]','', item) for item in out]
+    return out
 
 @retry(ConnectionError, tries=5, delay=1)
 def dw_bacen():
@@ -33,18 +39,22 @@ def dw_bacen():
         df_ptax = pd.read_csv(
             links_f['BACEN PTAX'], sep=';', decimal=',', parse_dates=['data'])
     except ConnectionError:
-        raise ConnectionError
+        return None
+
+    df_ptax.columns = fixnames(df_ptax.columns)
 
     # load FOCUS report data (end of year expectations)
     try:
         df_focus = pd.read_csv(links_f['BACEN FOCUS'], index_col=[
                                'Data'], decimal=',')
     except ConnectionError:
-        raise ConnectionError
+        return None
 
     # use date as column
     df_focus.reset_index(inplace=True)
     df_focus['Data'] = pd.to_datetime(df_focus['Data'], format='%Y-%m-%d')
+
+    df_focus.columns = fixnames(df_focus.columns)
 
     return df_ptax, df_focus
 
@@ -83,6 +93,8 @@ def dw_cme():
     df_cme = df_cme.groupby(['BizDt', 'Sym', 'MatDt', 'PutCall'])[
         'SettlePrice'].max().reset_index()
 
+    df_cme.columns = fixnames(df_cme.columns)
+
     return df_cme
 
 
@@ -100,7 +112,7 @@ def dw_combustiveis():
         df_anp = pd.read_excel(
             links_f['ANP Semanal'], skiprows=12, na_values='-', parse_dates=['DATA INICIAL', 'DATA FINAL'])
     except ConnectionError:
-        raise ConnectionError
+        return None
 
     # filter regions
     df_anp = df_anp[df_anp.REGIÃO.isin(
@@ -120,6 +132,8 @@ def dw_combustiveis():
     }
     ).reset_index()
 
+    df_anp.columns = fixnames(df_anp.columns)
+
     # Load oil quotes data
     try:
         df_wti = pd.read_csv(links_f['Oil WTI'].format(
@@ -127,7 +141,7 @@ def dw_combustiveis():
         df_nym = pd.read_csv(links_f['Oil NYMEX'].format(
             api_quandl), index_col=['Date'])
     except ConnectionError:
-        raise ConnectionError
+        return None
 
     df_wti.rename(columns={'Settle': 'Oil WTI'}, inplace=True)
     df_nym.rename(columns={'Settle': 'Oil NYMEX'}, inplace=True)
@@ -135,6 +149,8 @@ def dw_combustiveis():
     df_oil = pd.merge(df_wti, df_nym, left_index=True, right_index=True)
 
     df_oil.reset_index(inplace=True)
+
+    df_oil.columns = fixnames(df_oil.columns)
 
     return df_anp, df_oil
 
@@ -190,7 +206,7 @@ def dw_ibge():
         try:
             dt = requests.get(links_f[base])
         except ConnectionError:
-            raise ConnectionError
+            return None
 
         # carrega de string para json
         tmp = json.loads(dt.content)
@@ -218,6 +234,8 @@ def dw_ibge():
     temp = df_ibge.melt(id_vars=['D3C', 'D2N', 'D1N'], value_vars=['V'])
     df_ibge = temp.groupby(['D3C', 'D2N']).mean().reset_index()
 
+    df_ibge.columns = fixnames(df_ibge.columns)
+
     return df_ibge
 
 
@@ -235,7 +253,7 @@ def dw_noticias():
     try:
         goog_req = requests.get(links_f['RSS']['Noticias Google Brasil'])
     except ConnectionError:
-        raise ConnectionError
+        return None
 
     goog_dic = xmltodict.parse(goog_req.content)
 
@@ -251,6 +269,8 @@ def dw_noticias():
     # adjust dates
     df_goog['pubDate'] = pd.to_datetime(df_goog['pubDate'])
     df_goog['pubDate'] = df_goog.pubDate.dt.tz_convert('America/Sao_Paulo')
+
+    df_goog.columns = fixnames(df_goog.columns)
 
     return df_goog
 
@@ -279,7 +299,7 @@ def dw_quandl():
         try:
             tmpdf = pd.read_csv(links_f[base].format(api_quandl))
         except ConnectionError:
-            raise ConnectionError
+            return None
 
         tmpdf.set_index(['Date'], inplace=True)
         tmpdf.rename(columns={'Settle': str(base),
@@ -295,8 +315,9 @@ def dw_quandl():
     # drop unnecessary variables
     cols = df_quandl.columns.str.startswith(('Quandl', 'CEPEA'))
     df_quandl = df_quandl.iloc[:, cols]
-
     df_quandl.reset_index(inplace=True)
+
+    df_quandl.columns = fixnames(df_quandl.columns)
 
     return df_quandl
 
@@ -333,6 +354,8 @@ def dw_scot():
 
     df_scot = df_scot.astype(df_scot_dtypes)
 
+    df_scot.columns = fixnames(df_scot.columns)
+
     return df_scot
 
 
@@ -357,6 +380,8 @@ def dw_china():
     df_china.columns = ['Commodity', 'Sectors',
                         'Last week', 'This week', 'Change', 'Data Obs']
 
+    df_china.columns = fixnames(df_china.columns)
+
     return df_china
 
 
@@ -375,5 +400,7 @@ def dw_fretes():
     df_fretes['Destino'] = df_fretes['Destino']+'/'+df_fretes['UF.1']
 
     df_fretes.drop(['UF', 'UF.1'], axis=1, inplace=True)
+
+    df_fretes.columns = fixnames(df_fretes.columns)
 
     return df_fretes
