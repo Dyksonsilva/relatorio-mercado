@@ -108,7 +108,7 @@ def gr_ptax():
 
 
 def gr_comb_intl():
-    qry = f'SELECT * FROM dw_combustiveis;'
+    qry = f'SELECT * FROM dw_oil;'
     df = pd.read_sql_query(qry, con=db)
 
     fig = go.Figure()
@@ -120,6 +120,16 @@ def gr_comb_intl():
                       xaxis_title='Data',
                       yaxis_title='US$/barril',
                       title='Cotações internacionais do petróleo')
+    return fig
+
+def gr_comb_nac():
+    qry = f'SELECT data_inicial, produto, AVG(preço_médio_revenda) as media FROM dw_anp GROUP BY data_inicial, produto ORDER BY data_inicial ASC;'
+    df = pd.read_sql_query(qry, con=db)
+
+    df = pd.melt(df.reset_index(), id_vars='index')
+
+    fig = px.line(df, x='index', y='value', color='variable', **gr_styles)
+    fig.update_layout(title='.', showlegend=False)
     return fig
 
 
