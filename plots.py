@@ -22,13 +22,17 @@ if DATABASE_URL is None:
 
     db = create_engine(DATABASE_URL, connect_args={'sslmode': 'require'})
 
+# layout options
+gr_styles = {'height': 400,
+             'width': 500}
+
 
 def gr_ipca():
     qry = f'SELECT * FROM dw_ibge WHERE d2n LIKE %(filter)s ORDER BY d3c ASC;'
     df = pd.read_sql_query(qry, con=db, params={'filter': '%IPCA%'})
 
-    fig = px.line(df, x='d3c', y='value', color='d2n')
-    fig.update_layout(template='plotly_white')
+    fig = px.line(df, x='d3c', y='value', color='d2n', **gr_styles)
+    fig.update_layout(template='plotly_white', showlegend=False)
     return fig
 
 
@@ -36,8 +40,8 @@ def gr_pimpf(df):
     qry = f'SELECT * FROM dw_ibge WHERE d2n LIKE %(filter)s ORDER BY d3c ASC;'
     df = pd.read_sql_query(qry, con=db, params={'filter': '%IPP%'})
 
-    fig = px.line(df, x='d3c', y='value', color='d2n')
-    fig.update_layout(template='plotly_white')
+    fig = px.line(df, x='d3c', y='value', color='d2n', **gr_styles)
+    fig.update_layout(template='plotly_white', showlegend=False)
     return fig
 
 
@@ -45,8 +49,8 @@ def gr_pmc(df):
     qry = f'SELECT * FROM dw_ibge WHERE d2n LIKE %(filter)s ORDER BY d3c ASC;'
     df = pd.read_sql_query(qry, con=db, params={'filter': '%comércio%'})
 
-    fig = px.line(df, x='d3c', y='value', color='d2n')
-    fig.update_layout(template='plotly_white')
+    fig = px.line(df, x='d3c', y='value', color='d2n', **gr_styles)
+    fig.update_layout(template='plotly_white', showlegend=False)
     return fig
 
 
@@ -54,8 +58,8 @@ def gr_pms(df):
     qry = f'SELECT * FROM dw_ibge WHERE d2n LIKE %(filter)s ORDER BY d3c ASC;'
     df = pd.read_sql_query(qry, con=db, params={'filter': '%serviços%'})
 
-    fig = px.line(df, x='d3c', y='value', color='d2n')
-    fig.update_layout(template='plotly_white')
+    fig = px.line(df, x='d3c', y='value', color='d2n', **gr_styles)
+    fig.update_layout(template='plotly_white', showlegend=False)
     return fig
 
 # banco central
@@ -67,8 +71,8 @@ def gr_focus(df):
 
     df = df.groupby(['data', 'indicador']).mean().reset_index()
 
-    fig = px.line(df, x='data', y='mediana', color='indicador')
-    fig.update_layout(template='plotly_white')
+    fig = px.line(df, x='data', y='mediana', color='indicador', **gr_styles)
+    fig.update_layout(template='plotly_white', showlegend=False)
     return fig
 
 
@@ -76,8 +80,8 @@ def gr_ptax(df):
     qry = f'SELECT * FROM dw_focus WHERE data > %(data)s;'
     df = pd.read_sql_query(qry, con=db, params={'data': '2017-01-01'})
 
-    fig = px.line(df.sort_values(by='data'), x='data', y='valor')
-    fig.update_layout(template='plotly_white')
+    fig = px.line(df.sort_values(by='data'), x='data', y='valor', **gr_styles)
+    fig.update_layout(template='plotly_white', showlegend=False)
     return fig
 
 # commodities
@@ -88,7 +92,7 @@ def gr_comb_intl(df):
     df = pd.read_sql_query(qry, con=db)
 
     fig = go.Figure()
-    fig.update_layout(template='plotly_white')
+    fig.update_layout(template='plotly_white', showlegend=False)
     fig.add_trace(go.Scatter(
         x=df['index'], y=df['oil_wti'], name='Barril WTI'))
     fig.add_trace(go.Scatter(
@@ -102,8 +106,8 @@ def gr_graos(df):
 
     df = pd.melt(df.reset_index(), id_vars='index')
 
-    fig = px.line(df, x='index', y='value', color='variable')
-    fig.update_layout(template='plotly_white', title='.')
+    fig = px.line(df, x='index', y='value', color='variable', **gr_styles)
+    fig.update_layout(template='plotly_white', title='.', showlegend=False)
     return fig
 
 
@@ -112,8 +116,8 @@ def gr_animais(df):
     df = pd.read_sql_query(qry, con=db)
     df = pd.melt(df.reset_index(), id_vars='index')
 
-    fig = px.line(df, x='index', y='value', color='variable')
-    fig.update_layout(template='plotly_white', title='.')
+    fig = px.line(df, x='index', y='value', color='variable', **gr_styles)
+    fig.update_layout(template='plotly_white', title='.', showlegend=False)
     return fig
 
 
@@ -122,8 +126,8 @@ def gr_metais(df):
     df = pd.read_sql_query(qry, con=db)
     df = pd.melt(df.reset_index(), id_vars='index')
 
-    fig = px.line(df.dropna(), x='index', y='value', color='variable')
-    fig.update_layout(template='plotly_white')
+    fig = px.line(df.dropna(), x='index', y='value', color='variable', **gr_styles)
+    fig.update_layout(template='plotly_white', showlegend=False)
     return fig
 
 
@@ -131,6 +135,6 @@ def gr_gasnat(df):
     df = f'SELECT index, quandl_nat_gas_us, quandl_nat_gas_uk FROM dw_quandl;'
     df = pd.melt(df.reset_index(), id_vars='index')
 
-    fig = px.line(df, x='index', y='value', color='variable')
-    fig.update_layout(template='plotly_white')
+    fig = px.line(df, x='index', y='value', color='variable', **gr_styles)
+    fig.update_layout(template='plotly_white', showlegend=False)
     return fig
