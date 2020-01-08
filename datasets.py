@@ -38,7 +38,7 @@ def dw_bacen():
     try:
         df_ptax = pd.read_csv(
             links_f['BACEN PTAX'], sep=';', decimal=',', parse_dates=['data'])
-    except ConnectionError:
+    except:
         return None
 
     df_ptax.columns = fixnames(df_ptax.columns)
@@ -47,7 +47,7 @@ def dw_bacen():
     try:
         df_focus = pd.read_csv(links_f['BACEN FOCUS'], index_col=[
                                'Data'], decimal=',')
-    except ConnectionError:
+    except:
         return None
 
     # use date as column
@@ -111,7 +111,7 @@ def dw_combustiveis():
     try:
         df_anp = pd.read_excel(
             links_f['ANP Semanal'], skiprows=12, na_values='-', parse_dates=['DATA INICIAL', 'DATA FINAL'])
-    except ConnectionError:
+    except:
         return None
 
     # filter regions
@@ -140,17 +140,17 @@ def dw_combustiveis():
             api_quandl), index_col=['Date'])
         df_nym = pd.read_csv(links_f['Oil NYMEX'].format(
             api_quandl), index_col=['Date'])
-    except ConnectionError:
+    except:
         return None
 
     df_wti.rename(columns={'Settle': 'Oil WTI'}, inplace=True)
     df_nym.rename(columns={'Settle': 'Oil NYMEX'}, inplace=True)
 
     df_oil = pd.merge(df_wti, df_nym, left_index=True, right_index=True)
-
     df_oil.reset_index(inplace=True)
 
     df_oil.columns = fixnames(df_oil.columns)
+    df_oil['date'] = pd.to_datetime(df_oil['date'], format='%Y-%m-%d')
 
     return df_anp, df_oil
 
@@ -205,7 +205,7 @@ def dw_ibge():
         # faz o download dos dados (vem como JSON da API)
         try:
             dt = requests.get(links_f[base])
-        except ConnectionError:
+        except:
             return None
 
         # carrega de string para json
@@ -252,7 +252,7 @@ def dw_noticias():
     # Google News
     try:
         goog_req = requests.get(links_f['RSS']['Noticias Google Brasil'])
-    except ConnectionError:
+    except:
         return None
 
     goog_dic = xmltodict.parse(goog_req.content)
@@ -271,6 +271,9 @@ def dw_noticias():
     df_goog['pubDate'] = df_goog.pubDate.dt.tz_convert('America/Sao_Paulo')
 
     df_goog.columns = fixnames(df_goog.columns)
+
+    # select columns
+    df_goog = df_goog[['title','link','pubdate','source']]
 
     return df_goog
 
@@ -298,7 +301,7 @@ def dw_quandl():
         # load commodity data
         try:
             tmpdf = pd.read_csv(links_f[base].format(api_quandl))
-        except ConnectionError:
+        except:
             return None
 
         tmpdf.set_index(['Date'], inplace=True)
