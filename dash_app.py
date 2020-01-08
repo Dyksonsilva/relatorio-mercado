@@ -7,7 +7,7 @@ import dash
 import dash_bootstrap_components as dbc
 import dash_core_components as dcc
 import dash_html_components as html
-from datetime.datetime import now
+import datetime
 import plots
 import numpy as np
 import pandas as pd
@@ -44,7 +44,7 @@ navbar = dbc.NavbarSimple(
 # structure
 body = dbc.Container([
     # Card inicial --------------------------------------------------
-    dcc.Markdown('[Angelo Salton - Suprimentos SLC Agrícola S.A.](mailto:angelo.salton@slcagricola.com.br?subject=Relatório%20de%20Mercado%20Suprimentos) - Atualizado em {0}'.format(now().strftime('%d/%m/%Y, %H:%M'))),
+    dcc.Markdown('[Angelo Salton - Suprimentos SLC Agrícola S.A.](mailto:angelo.salton@slcagricola.com.br?subject=Relatório%20de%20Mercado%20Suprimentos) - Atualizado em {0}'.format(datetime.datetime.now().strftime('%d/%m/%Y, %H:%M'))),
     # Notícias ------------------------------------------------------
     html.H1('Notícias'),
     dbc.Row([
