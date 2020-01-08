@@ -25,7 +25,7 @@ if DATABASE_URL is None:
 
 def gr_ipca():
     qry = f'SELECT * FROM dw_ibge WHERE d2n LIKE %(filter)s ORDER BY d3c ASC;'
-    df = pd.read_sql_query(qry, con=db, params={'filter':'%IPCA%'})
+    df = pd.read_sql_query(qry, con=db, params={'filter': '%IPCA%'})
 
     fig = px.line(df, x='d3c', y='value', color='d2n')
     fig.update_layout(template='plotly_white')
@@ -33,31 +33,28 @@ def gr_ipca():
 
 
 def gr_pimpf(df):
-    df = df.loc[df.D2N ==
-                'IPP - Variação mês/mesmo mês do ano anterior (M/M-12)']
-    df = df.loc[df.D4N.str.contains(r'Indústria Geral', regex=False)]
-    df = df.groupby(['D3C', 'D4N']).mean().reset_index().copy()
+    qry = f'SELECT * FROM dw_ibge WHERE d2n LIKE %(filter)s ORDER BY d3c ASC;'
+    df = pd.read_sql_query(qry, con=db, params={'filter': '%IPP%'})
 
-    fig = px.line(df, x='D3C', y='V', color='D4N')
+    fig = px.line(df, x='d3c', y='value', color='d2n')
     fig.update_layout(template='plotly_white')
     return fig
 
 
 def gr_pmc(df):
-    df = df.loc[df.D2N ==
-                'Índice de volume de vendas no comércio varejista ampliado']
-    df = df.groupby(['D3C', 'D5N']).mean().reset_index().copy()
+    qry = f'SELECT * FROM dw_ibge WHERE d2n LIKE %(filter)s ORDER BY d3c ASC;'
+    df = pd.read_sql_query(qry, con=db, params={'filter': '%comércio%'})
 
-    fig = px.line(df, x='D3C', y='V', color='D5N')
+    fig = px.line(df, x='d3c', y='value', color='d2n')
     fig.update_layout(template='plotly_white')
     return fig
 
 
 def gr_pms(df):
-    df = df.loc[df.D2N == 'Índice de volume de serviços']
-    df = df.groupby(['D3C', 'D1N']).mean().reset_index().copy()
+    qry = f'SELECT * FROM dw_ibge WHERE d2n LIKE %(filter)s ORDER BY d3c ASC;'
+    df = pd.read_sql_query(qry, con=db, params={'filter': '%serviços%'})
 
-    fig = px.line(df, x='D3C', y='V', color='D1N')
+    fig = px.line(df, x='d3c', y='value', color='d2n')
     fig.update_layout(template='plotly_white')
     return fig
 
@@ -65,15 +62,19 @@ def gr_pms(df):
 
 
 def gr_focus(df):
-    df = df.groupby(['Data', 'Indicador']).mean().reset_index()
+    qry = f'SELECT * FROM dw_focus;'
+    df = pd.read_sql_query(qry, con=db)
 
-    fig = px.line(df, x='Data', y='Mediana', color='Indicador')
+    df = df.groupby(['data', 'indicador']).mean().reset_index()
+
+    fig = px.line(df, x='data', y='mediana', color='indicador')
     fig.update_layout(template='plotly_white')
     return fig
 
 
 def gr_ptax(df):
-    df = df[df.data > '2017-01-01']
+    qry = f'SELECT * FROM dw_focus WHERE data > %(data)s;'
+    df = pd.read_sql_query(qry, con=db, params={'data': '2017-01-01'})
 
     fig = px.line(df.sort_values(by='data'), x='data', y='valor')
     fig.update_layout(template='plotly_white')
@@ -83,19 +84,22 @@ def gr_ptax(df):
 
 
 def gr_comb_intl(df):
-    df = df[1].sort_index()
+    qry = f'SELECT * FROM dw_combustiveis;'
+    df = pd.read_sql_query(qry, con=db)
+
     fig = go.Figure()
     fig.update_layout(template='plotly_white')
     fig.add_trace(go.Scatter(
-        x=df.index, y=df['Oil WTI'], name='Oil WTI'))
+        x=df['index'], y=df['oil_wti'], name='Barril WTI'))
     fig.add_trace(go.Scatter(
-        x=df.index, y=df['Oil NYMEX'], name='Oil NYMEX'))
+        x=df['index'], y=df['oil_nymex'], name='Barril NYMEX'))
     return fig
 
 
 def gr_graos(df):
-    df = df[['Quandl Wheat', 'Quandl Soybeans',
-             'Quandl Cotton', 'Quandl Corn', 'CEPEA Trigo Parana', 'CEPEA Soja']]
+    qry = f'SELECT index, quandl_wheat, quandl_soybeans,quandl_cotton, quandl_corn, cepea_trigo_parana, cepea_soja FROM dw_quandl;'
+    df = pd.read_sql_query(qry, con=db)
+
     df = pd.melt(df.reset_index(), id_vars='index')
 
     fig = px.line(df, x='index', y='value', color='variable')
@@ -104,7 +108,8 @@ def gr_graos(df):
 
 
 def gr_animais(df):
-    df = df[['CEPEA Bezerro', 'CEPEA Porco']]
+    qry = f'SELECT index, cepea_bezerro, cepea_porco FROM dw_quandl;'
+    df = pd.read_sql_query(qry, con=db)
     df = pd.melt(df.reset_index(), id_vars='index')
 
     fig = px.line(df, x='index', y='value', color='variable')
@@ -113,8 +118,8 @@ def gr_animais(df):
 
 
 def gr_metais(df):
-    df = df[['Quandl Steel China',
-             'Quandl Steel US', 'Quandl Zinc China']]
+    qry = f'SELECT index, quandl_steel_china, quandl_steel_us, quandl_zinc_china FROM dw_quandl;'
+    df = pd.read_sql_query(qry, con=db)
     df = pd.melt(df.reset_index(), id_vars='index')
 
     fig = px.line(df.dropna(), x='index', y='value', color='variable')
@@ -123,7 +128,7 @@ def gr_metais(df):
 
 
 def gr_gasnat(df):
-    df = df[['Quandl Nat Gas US', 'Quandl Nat Gas UK']]
+    df = f'SELECT index, quandl_nat_gas_us, quandl_nat_gas_uk FROM dw_quandl;'
     df = pd.melt(df.reset_index(), id_vars='index')
 
     fig = px.line(df, x='index', y='value', color='variable')
