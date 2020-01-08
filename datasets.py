@@ -272,6 +272,9 @@ def dw_noticias():
 
     df_goog.columns = fixnames(df_goog.columns)
 
+    # select columns
+    df_goog = df_goog[['title','link','pubdate','source']]
+
     return df_goog
 
 
