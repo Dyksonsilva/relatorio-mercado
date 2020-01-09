@@ -168,7 +168,6 @@ def gr_metais():
 
 def gr_gasnat():
     df = f'SELECT index, quandl_nat_gas_us, quandl_nat_gas_uk FROM dw_quandl;'
-    df = pd.melt(df, id_vars='index')
 
     fig = go.Figure()
     fig.add_trace(go.Scatter(
