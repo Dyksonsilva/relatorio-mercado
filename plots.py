@@ -138,7 +138,7 @@ def gr_graos():
     qry = f'SELECT index, quandl_wheat, quandl_soybeans,quandl_cotton, quandl_corn, cepea_trigo_parana, cepea_soja FROM dw_quandl;'
     df = pd.read_sql_query(qry, con=db)
 
-    df = pd.melt(df.reset_index(), id_vars='index')
+    df = pd.melt(df, id_vars='index')
 
     fig = px.line(df, x='index', y='value', color='variable', **gr_styles)
     fig.update_layout(title='.', showlegend=False)
@@ -148,7 +148,7 @@ def gr_graos():
 def gr_animais():
     qry = f'SELECT index, cepea_bezerro, cepea_porco FROM dw_quandl;'
     df = pd.read_sql_query(qry, con=db)
-    df = pd.melt(df.reset_index(), id_vars='index')
+    df = pd.melt(df, id_vars='index')
 
     fig = px.line(df, x='index', y='value', color='variable', **gr_styles)
     fig.update_layout(title='.', showlegend=False)
@@ -158,9 +158,9 @@ def gr_animais():
 def gr_metais():
     qry = f'SELECT index, quandl_steel_china, quandl_steel_us, quandl_zinc_china FROM dw_quandl;'
     df = pd.read_sql_query(qry, con=db)
-    df = pd.melt(df.reset_index(), id_vars='index')
+    df = pd.melt(df, id_vars='index')
 
-    fig = px.line(df.dropna(), x='index', y='value',
+    fig = px.line(df, x='index', y='value',
                   color='variable', **gr_styles)
     fig.update_layout(showlegend=False)
     return fig
@@ -168,7 +168,7 @@ def gr_metais():
 
 def gr_gasnat():
     df = f'SELECT index, quandl_nat_gas_us, quandl_nat_gas_uk FROM dw_quandl;'
-    df = pd.melt(df.reset_index(), id_vars='index')
+    df = pd.melt(df, id_vars='index')
 
     fig = px.line(df, x='index', y='value', color='variable', **gr_styles)
     fig.update_layout(showlegend=False)
