@@ -13,6 +13,7 @@ import numpy as np
 import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
+import texts
 
 # navbar
 navbar = dbc.NavbarSimple(
@@ -54,7 +55,7 @@ body = dbc.Container([
     html.H2('IPCA'),
     dbc.Row([
             dbc.Col([
-                dcc.Markdown('Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem. Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, nisi ut aliquid ex ea commodi consequatur? Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil molestiae consequatur, vel illum qui dolorem eum fugiat quo voluptas nulla pariatur?')
+                dcc.Markdown(texts.ipca)
             ]),
             dbc.Col([
                 dcc.Graph(figure=plots.gr_ipca())
@@ -64,7 +65,7 @@ body = dbc.Container([
     html.H2('Comércio'),
     dbc.Row([
         dbc.Col([
-            dcc.Markdown('texto aqui'),
+            dcc.Markdown(texts.pmc),
         ]),
         dbc.Col([
             dcc.Graph(figure=plots.gr_pmc())
@@ -74,7 +75,7 @@ body = dbc.Container([
     html.H2('Serviços'),
     dbc.Row([
         dbc.Col([
-            dcc.Markdown('texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui'),
+            dcc.Markdown(texts.pms),
         ]),
         dbc.Col([
             dcc.Graph(figure=plots.gr_pms())
@@ -84,7 +85,7 @@ body = dbc.Container([
     html.H2('Produção'),
     dbc.Row([
         dbc.Col([
-            dcc.Markdown('texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui'),
+            dcc.Markdown(texts.pimpf),
         ]),
         dbc.Col([
             dcc.Graph(figure=plots.gr_pimpf())
@@ -96,7 +97,7 @@ body = dbc.Container([
     html.H2('Relatório Focus'),
     dbc.Row([
             dbc.Col([
-                dcc.Markdown('Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem. Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, nisi ut aliquid ex ea commodi consequatur? Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil molestiae consequatur, vel illum qui dolorem eum fugiat quo voluptas nulla pariatur?')
+                dcc.Markdown(texts.focus)
             ]),
             dbc.Col([
                 dcc.Graph(figure=plots.gr_focus())
@@ -106,7 +107,7 @@ body = dbc.Container([
     html.H2('Dólar'),
     dbc.Row([
         dbc.Col([
-            dcc.Markdown('texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui'),
+            dcc.Markdown(texts.ptax),
         ]),
         dbc.Col([
             dcc.Graph(figure=plots.gr_ptax())
@@ -118,7 +119,7 @@ body = dbc.Container([
     html.H2('Combustíveis'),
     dbc.Row([
         dbc.Col([
-            dcc.Markdown('texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui'),
+            dcc.Markdown(texts.comb_intl),
         ]),
         dbc.Col([
             dcc.Graph(figure=plots.gr_comb_intl())
@@ -128,7 +129,7 @@ body = dbc.Container([
     html.H2('Grãos'),
     dbc.Row([
         dbc.Col([
-            dcc.Markdown('texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui'),
+            dcc.Markdown(texts.graos),
         ]),
         dbc.Col([
             # dcc.Graph(figure=plots.gr_graos())
@@ -138,7 +139,7 @@ body = dbc.Container([
     html.H2('Animais'),
     dbc.Row([
         dbc.Col([
-            dcc.Markdown('texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui'),
+            dcc.Markdown(texts.animais),
         ]),
         dbc.Col([
             # dcc.Graph(figure=plots.gr_animais())
@@ -148,7 +149,7 @@ body = dbc.Container([
     html.H2('Metais'),
     dbc.Row([
         dbc.Col([
-            dcc.Markdown('texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui'),
+            dcc.Markdown(texts.metais),
         ]),
         dbc.Col([
             # dcc.Graph(figure=plots.gr_metais())
@@ -158,7 +159,7 @@ body = dbc.Container([
     html.H2('Gás natural'),
     dbc.Row([
         dbc.Col([
-            dcc.Markdown('texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui'),
+            dcc.Markdown(texts.gasnat),
         ]),
         dbc.Col([
             # dcc.Graph(figure=plots.gr_gasnat())
