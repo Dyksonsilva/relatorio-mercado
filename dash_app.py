@@ -131,7 +131,7 @@ body = dbc.Container([
             dcc.Markdown('texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui'),
         ]),
         dbc.Col([
-            dcc.Graph(figure=plots.gr_graos())
+            # dcc.Graph(figure=plots.gr_graos())
         ]),
     ]),
     # Animais
@@ -141,7 +141,7 @@ body = dbc.Container([
             dcc.Markdown('texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui'),
         ]),
         dbc.Col([
-            dcc.Graph(figure=plots.gr_animais())
+            # dcc.Graph(figure=plots.gr_animais())
         ]),
     ]),
     # Metais
@@ -151,7 +151,7 @@ body = dbc.Container([
             dcc.Markdown('texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui'),
         ]),
         dbc.Col([
-            dcc.Graph(figure=plots.gr_metais())
+            # dcc.Graph(figure=plots.gr_metais())
         ]),
     ]),
     # Gás natural
