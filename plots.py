@@ -93,7 +93,7 @@ def gr_focus():
 
 
 def gr_ptax():
-    qry = f'SELECT * FROM dw_ptax WHERE data > %(data)s;'
+    qry = f'SELECT * FROM dw_ptax WHERE data > %(data)s ORDER BY data ASC;'
     df = pd.read_sql_query(qry, con=db, params={'data': '2017-01-01'})
 
     fig = px.line(df, x='data', y='valor', **gr_styles)
@@ -119,7 +119,8 @@ def gr_comb_intl():
     fig.update_layout(showlegend=False,
                       xaxis_title='Data',
                       yaxis_title='US$/barril',
-                      title='Cotações internacionais do petróleo')
+                      title='Cotações internacionais do petróleo',
+                      **gr_styles)
     return fig
 
 def gr_comb_nac():
@@ -177,5 +178,6 @@ def gr_gasnat():
     fig.update_layout(showlegend=False,
                       xaxis_title='Data',
                     #   yaxis_title='US$/barril',
-                      title='Gás natural')
+                      title='Gás natural',
+                      **gr_styles)
     return fig
