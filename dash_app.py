@@ -161,7 +161,7 @@ body = dbc.Container([
             dcc.Markdown('texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui texto aqui'),
         ]),
         dbc.Col([
-            dcc.Graph(figure=plots.gr_gasnat())
+            # dcc.Graph(figure=plots.gr_gasnat())
         ])
     ]),
     html.Footer([
