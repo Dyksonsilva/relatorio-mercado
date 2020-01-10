@@ -17,9 +17,9 @@ focus = 'Dados do relatório Focus.'
 
 ptax = 'Informações do dólar'
 
-comb_intl = '...'
+comb_intl = 'No mercado internacional..'
 
-comb_nac = '...'
+comb_nac = 'No mercado nacional...'
 
 graos = '...'
 

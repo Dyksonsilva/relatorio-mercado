@@ -125,6 +125,14 @@ body = dbc.Container([
             dcc.Graph(figure=plots.gr_comb_intl())
         ]),
     ]),
+    dbc.Row([
+        dbc.Col([
+            dcc.Markdown(texts.comb_nac),
+        ]),
+        dbc.Col([
+            dcc.Graph(figure=plots.gr_comb_nac())
+        ]),
+    ]),
     # Grãos
     html.H2('Grãos'),
     dbc.Row([
@@ -132,7 +140,7 @@ body = dbc.Container([
             dcc.Markdown(texts.graos),
         ]),
         dbc.Col([
-            # dcc.Graph(figure=plots.gr_graos())
+            dcc.Graph(figure=plots.gr_graos())
         ]),
     ]),
     # Animais
@@ -142,7 +150,7 @@ body = dbc.Container([
             dcc.Markdown(texts.animais),
         ]),
         dbc.Col([
-            # dcc.Graph(figure=plots.gr_animais())
+            dcc.Graph(figure=plots.gr_animais())
         ]),
     ]),
     # Metais
@@ -152,7 +160,7 @@ body = dbc.Container([
             dcc.Markdown(texts.metais),
         ]),
         dbc.Col([
-            # dcc.Graph(figure=plots.gr_metais())
+            dcc.Graph(figure=plots.gr_metais())
         ]),
     ]),
     # Gás natural
@@ -162,7 +170,7 @@ body = dbc.Container([
             dcc.Markdown(texts.gasnat),
         ]),
         dbc.Col([
-            # dcc.Graph(figure=plots.gr_gasnat())
+            dcc.Graph(figure=plots.gr_gasnat())
         ])
     ]),
     html.Footer([
