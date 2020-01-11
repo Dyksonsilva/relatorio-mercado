@@ -34,7 +34,7 @@ gr_styles = {'height': 400,
 
 def gr_ipca():
     qry = f'SELECT * FROM dw_ibge WHERE d2n LIKE %(filter)s ORDER BY d3c ASC;'
-    df = pd.read_sql_query(qry, con=db, params={'filter': '%IPCA%'})
+    df = pd.read_sql_query(qry, con=db, params={'filter': '%IPCA%'}, parse_dates=['d3c'])
 
     fig = px.line(df, x='d3c', y='value', color='d2n')
     fig.update_layout(showlegend=False,
@@ -47,7 +47,7 @@ def gr_ipca():
 
 def gr_pimpf():
     qry = f'SELECT * FROM dw_ibge WHERE d2n LIKE %(filter)s ORDER BY d3c ASC;'
-    df = pd.read_sql_query(qry, con=db, params={'filter': '%IPP%'})
+    df = pd.read_sql_query(qry, con=db, params={'filter': '%IPP%'}, parse_dates=['d3c'])
 
     fig = px.line(df, x='d3c', y='value', color='d2n')
     fig.update_layout(showlegend=False,
@@ -60,7 +60,7 @@ def gr_pimpf():
 
 def gr_pmc():
     qry = f'SELECT * FROM dw_ibge WHERE d2n LIKE %(filter)s ORDER BY d3c ASC;'
-    df = pd.read_sql_query(qry, con=db, params={'filter': '%comércio%'})
+    df = pd.read_sql_query(qry, con=db, params={'filter': '%comércio%'}, parse_dates=['d3c'])
 
     fig = px.line(df, x='d3c', y='value', color='d2n')
     fig.update_layout(showlegend=False,
@@ -73,7 +73,7 @@ def gr_pmc():
 
 def gr_pms():
     qry = f'SELECT * FROM dw_ibge WHERE d2n LIKE %(filter)s ORDER BY d3c ASC;'
-    df = pd.read_sql_query(qry, con=db, params={'filter': '%serviços%'})
+    df = pd.read_sql_query(qry, con=db, params={'filter': '%serviços%'}, parse_dates=['d3c'])
 
     fig = px.line(df, x='d3c', y='value', color='d2n')
     fig.update_layout(showlegend=False,
@@ -88,7 +88,7 @@ def gr_pms():
 
 def gr_focus():
     qry = f'SELECT * FROM dw_focus WHERE indicador NOT LIKE %(filter)s ORDER BY data ASC;'
-    df = pd.read_sql_query(qry, con=db, params={'filter':'%Balança%'})
+    df = pd.read_sql_query(qry, con=db, params={'filter':'%Balança%'}, parse_dates=['data'])
 
     df = df.groupby(['data', 'indicador']).mean().reset_index()
 
@@ -103,7 +103,7 @@ def gr_focus():
 
 def gr_ptax():
     qry = f'SELECT * FROM dw_ptax WHERE data > %(data)s ORDER BY data ASC;'
-    df = pd.read_sql_query(qry, con=db, params={'data': '2017-01-01'})
+    df = pd.read_sql_query(qry, con=db, params={'data': '2017-01-01'}, parse_dates=['data'])
 
     fig = px.line(df, x='data', y='valor')
     fig.update_layout(showlegend=False,
@@ -119,7 +119,7 @@ def gr_ptax():
 
 def gr_comb_intl():
     qry = f'SELECT * FROM dw_oil ORDER BY date ASC;'
-    df = pd.read_sql_query(qry, con=db)
+    df = pd.read_sql_query(qry, con=db, parse_dates=['date'])
 
     fig = go.Figure()
     fig.add_trace(go.Scatter(
@@ -136,7 +136,7 @@ def gr_comb_intl():
 
 def gr_comb_nac():
     qry = f'SELECT data_inicial, produto, AVG(preço_médio_revenda) as media FROM dw_anp GROUP BY data_inicial, produto ORDER BY data_inicial ASC;'
-    df = pd.read_sql_query(qry, con=db)
+    df = pd.read_sql_query(qry, con=db, parse_dates=['data_inicial'])
 
     fig = px.line(df, x='data_inicial', y='media', color='produto')
     fig.update_layout(showlegend=True,
@@ -150,12 +150,12 @@ def gr_comb_nac():
 
 
 def gr_graos():
-    qry = f'SELECT index, quandl_wheat, quandl_soybeans, quandl_cotton, quandl_corn, cepea_trigo_parana, cepea_soja FROM dw_quandl ORDER BY index ASC;'
-    df = pd.read_sql_query(qry, con=db)
+    qry = f'SELECT index AS data, quandl_wheat, quandl_soybeans, quandl_cotton, quandl_corn, cepea_trigo_parana, cepea_soja FROM dw_quandl ORDER BY index ASC;'
+    df = pd.read_sql_query(qry, con=db, parse_dates=['data'])
 
-    df = pd.melt(df, id_vars='index')
+    df = pd.melt(df, id_vars='data')
 
-    fig = px.line(df, x='index', y='value', color='variable')
+    fig = px.line(df, x='data', y='value', color='variable')
     fig.update_layout(showlegend=False, **gr_styles)
     return fig
 
@@ -163,11 +163,11 @@ def gr_graos():
 
 
 def gr_animais():
-    qry = f'SELECT index, cepea_bezerro, cepea_porco FROM dw_quandl ORDER BY index ASC;'
-    df = pd.read_sql_query(qry, con=db)
-    df = pd.melt(df, id_vars='index')
+    qry = f'SELECT index AS data, cepea_bezerro, cepea_porco FROM dw_quandl ORDER BY index ASC;'
+    df = pd.read_sql_query(qry, con=db, parse_dates=['data'])
+    df = pd.melt(df, id_vars='data')
 
-    fig = px.line(df, x='index', y='value', color='variable')
+    fig = px.line(df, x='data', y='value', color='variable')
     fig.update_layout(showlegend=False, **gr_styles)
     return fig
 
@@ -175,23 +175,23 @@ def gr_animais():
 
 
 def gr_metais():
-    qry = f'SELECT index, quandl_steel_china, quandl_steel_us, quandl_zinc_china FROM dw_quandl ORDER BY index ASC;'
-    df = pd.read_sql_query(qry, con=db)
-    df = pd.melt(df, id_vars='index')
+    qry = f'SELECT index AS data, quandl_steel_china, quandl_steel_us, quandl_zinc_china FROM dw_quandl ORDER BY index ASC;'
+    df = pd.read_sql_query(qry, con=db, parse_dates=['data'])
+    df = pd.melt(df, id_vars='data')
 
-    fig = px.line(df, x='index', y='value',
+    fig = px.line(df, x='data', y='value',
                   color='variable')
     fig.update_layout(showlegend=False, **gr_styles)
     return fig
 
 
 def gr_gasnat():
-    qry = f'SELECT index, quandl_nat_gas_us, quandl_nat_gas_uk FROM dw_quandl ORDER BY index ASC;'
-    df = pd.read_sql_query(qry, con=db)
+    qry = f'SELECT index AS data, quandl_nat_gas_us, quandl_nat_gas_uk FROM dw_quandl ORDER BY index ASC;'
+    df = pd.read_sql_query(qry, con=db, parse_dates=['data'])
 
-    df = pd.melt(df, id_vars='index')
+    df = pd.melt(df, id_vars='data')
 
-    fig = px.line(df, x='index', y='value',
+    fig = px.line(df, x='data', y='value',
                   color='variable')
     fig.update_layout(showlegend=False, **gr_styles)
     return fig
