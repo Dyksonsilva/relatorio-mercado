@@ -181,12 +181,12 @@ def gr_comb_nac():
 
 
 def gr_graos():
-    qry = f'SELECT index, quandl_wheat, quandl_soybeans, quandl_cotton, quandl_corn, cepea_trigo_parana, cepea_soja '\
+    qry = f'SELECT index as data, quandl_wheat, quandl_soybeans, quandl_cotton, quandl_corn, cepea_trigo_parana, cepea_soja '\
     'FROM dw_quandl '\
-    'ORDER BY index ASC;'
+    'ORDER BY data ASC;'
     df = pd.read_sql_query(qry, con=db)
 
-    df = pd.melt(df, id_vars='index')
+    df = pd.melt(df, id_vars='data')
 
     fig = px.line(df, x='data', y='value', color='variable')
     fig.update_layout(showlegend=False, **gr_styles)
@@ -196,11 +196,11 @@ def gr_graos():
 
 
 def gr_animais():
-    qry = f'SELECT index, cepea_bezerro, cepea_porco '\
+    qry = f'SELECT index as data, cepea_bezerro, cepea_porco '\
         'FROM dw_quandl '\
-        'ORDER BY index ASC;'
+        'ORDER BY data ASC;'
     df = pd.read_sql_query(qry, con=db)
-    df = pd.melt(df, id_vars='index')
+    df = pd.melt(df, id_vars='data')
 
     fig = px.line(df, x='data', y='value', color='variable')
     fig.update_layout(showlegend=False, **gr_styles)
@@ -210,11 +210,11 @@ def gr_animais():
 
 
 def gr_metais():
-    qry = f'SELECT index, quandl_steel_china, quandl_steel_us '\
+    qry = f'SELECT index as data, quandl_steel_china, quandl_steel_us '\
         'FROM dw_quandl '\
-        'ORDER BY index ASC;'
+        'ORDER BY data ASC;'
     df = pd.read_sql_query(qry, con=db)
-    df = pd.melt(df, id_vars='index')
+    df = pd.melt(df, id_vars='data')
 
     fig = px.line(df, x='data', y='value',
                   color='variable')
@@ -223,9 +223,9 @@ def gr_metais():
 
 
 def gr_gasnat():
-    qry = f'SELECT index, quandl_nat_gas_us, quandl_nat_gas_uk '\
+    qry = f'SELECT index as data, quandl_nat_gas_us, quandl_nat_gas_uk '\
         'FROM dw_quandl '\
-        'ORDER BY index ASC;'
+        'ORDER BY data ASC;'
     df = pd.read_sql_query(qry, con=db)
 
     df = pd.melt(df, id_vars='data')
