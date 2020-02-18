@@ -33,10 +33,15 @@ gr_styles = {'height': 400,
 
 
 def gr_ipca():
-    qry = f'SELECT * FROM dw_ibge WHERE d2n LIKE %(filter)s ORDER BY d3c ASC;'
+    qry = f'SELECT d2n as Indicador, '\
+        'd3c as Data, '\
+        'value as Valor '\
+        'FROM dw_ibge '\
+        'WHERE d2n LIKE %(filter)s '\
+        'ORDER BY d3c ASC;'
     df = pd.read_sql_query(qry, con=db, params={'filter': '%IPCA%'})
 
-    fig = px.line(df, x='d3c', y='value', color='d2n')
+    fig = px.line(df, x='Data', y='Valor', color='Indicador')
     fig.update_layout(showlegend=False,
                       xaxis_title='Data',
                       yaxis_title='Variação %',
@@ -46,10 +51,15 @@ def gr_ipca():
 
 
 def gr_pimpf():
-    qry = f'SELECT * FROM dw_ibge WHERE d2n LIKE %(filter)s ORDER BY d3c ASC;'
+    qry = f'SELECT d2n as Indicador, '\
+        'd3c as Data, '\
+        'value as Valor '\
+        'FROM dw_ibge '\
+        'WHERE d2n LIKE %(filter)s '\
+        'ORDER BY d3c ASC;'
     df = pd.read_sql_query(qry, con=db, params={'filter': '%IPP%'})
 
-    fig = px.line(df, x='d3c', y='value', color='d2n')
+    fig = px.line(df, x='Data', y='Valor', color='Indicador')
     fig.update_layout(showlegend=False,
                       xaxis_title='Data',
                       yaxis_title='Variação %',
@@ -59,10 +69,15 @@ def gr_pimpf():
 
 
 def gr_pmc():
-    qry = f'SELECT * FROM dw_ibge WHERE d2n LIKE %(filter)s ORDER BY d3c ASC;'
+    qry = f'SELECT d2n as Indicador, '\
+        'd3c as Data, '\
+        'value as Valor '\
+        'FROM dw_ibge '\
+        'WHERE d2n LIKE %(filter)s '\
+        'ORDER BY d3c ASC;'
     df = pd.read_sql_query(qry, con=db, params={'filter': '%comércio%'})
 
-    fig = px.line(df, x='d3c', y='value', color='d2n')
+    fig = px.line(df, x='Data', y='Valor', color='Indicador')
     fig.update_layout(showlegend=False,
                       xaxis_title='Data',
                       yaxis_title='Variação %',
@@ -72,10 +87,15 @@ def gr_pmc():
 
 
 def gr_pms():
-    qry = f'SELECT * FROM dw_ibge WHERE d2n LIKE %(filter)s ORDER BY d3c ASC;'
+    qry = f'SELECT d2n as Indicador, '\
+        'd3c as Data, '\
+        'value as Valor '\
+        'FROM dw_ibge '\
+        'WHERE d2n LIKE %(filter)s '\
+        'ORDER BY d3c ASC;'
     df = pd.read_sql_query(qry, con=db, params={'filter': '%serviços%'})
 
-    fig = px.line(df, x='d3c', y='value', color='d2n')
+    fig = px.line(df, x='Data', y='Valor', color='Indicador')
     fig.update_layout(showlegend=False,
                       xaxis_title='Data',
                       yaxis_title='Variação %',
@@ -87,12 +107,15 @@ def gr_pms():
 
 
 def gr_focus():
-    qry = f'SELECT * FROM dw_focus WHERE indicador NOT LIKE %(filter)s ORDER BY data ASC;'
-    df = pd.read_sql_query(qry, con=db, params={'filter':'%Balança%'})
+    qry = f'SELECT Data, Indicador, Datareferencia as Projecao, Mediana, Desviopadrao '\
+        'FROM dw_focus '\
+        'WHERE Indicador LIKE %(filter)s '\
+        'ORDER BY Data, Datareferencia;'
+    df = pd.read_sql_query(qry, con=db, params={'filter': '%PIB Total%'})
 
-    df = df.groupby(['data', 'indicador']).mean().reset_index()
+    #df = df.groupby(['Data', 'indicador']).mean().reset_index()
 
-    fig = px.line(df, x='data', y='mediana', color='indicador')
+    fig = px.line(df, x='Data', y='Mediana', color='Projecao', error_y='Desviopadrao')
     fig.update_layout(showlegend=False,
                       xaxis_title='Data',
                       yaxis_title='Valor esperado',
@@ -102,10 +125,13 @@ def gr_focus():
 
 
 def gr_ptax():
-    qry = f'SELECT * FROM dw_ptax WHERE data > %(data)s ORDER BY data ASC;'
+    qry = f'SELECT * '\
+        'FROM dw_ptax '\
+        'WHERE data > %(data)s '\
+        'ORDER BY data ASC;'
     df = pd.read_sql_query(qry, con=db, params={'data': '2017-01-01'})
 
-    fig = px.line(df, x='data', y='valor')
+    fig = px.line(df.reset_index(), x='data', y='valor')
     fig.update_layout(showlegend=False,
                       xaxis_title='Data',
                       yaxis_title='Cotação (R$/1 US$)',
@@ -118,7 +144,9 @@ def gr_ptax():
 
 
 def gr_comb_intl():
-    qry = f'SELECT * FROM dw_oil ORDER BY date ASC;'
+    qry = f'SELECT * '\
+        'FROM dw_oil '\
+        'ORDER BY date ASC;'
     df = pd.read_sql_query(qry, con=db)
 
     fig = go.Figure()
@@ -135,11 +163,14 @@ def gr_comb_intl():
 
 
 def gr_comb_nac():
-    qry = f'SELECT data_inicial, produto, AVG(preço_médio_revenda) as media FROM dw_anp GROUP BY data_inicial, produto ORDER BY data_inicial ASC;'
+    qry = f'SELECT data_inicial, produto, AVG(preço_médio_revenda) as media '\
+        'FROM dw_anp '\
+        'GROUP BY data_inicial, produto '\
+        'ORDER BY data_inicial ASC;'
     df = pd.read_sql_query(qry, con=db)
 
     fig = px.line(df, x='data_inicial', y='media', color='produto')
-    fig.update_layout(showlegend=True,
+    fig.update_layout(showlegend=False,
                       xaxis_title='Data',
                       yaxis_title='R$/l, R$/13kg (GLP)',
                       title='Preços médios de revenda',
@@ -150,7 +181,9 @@ def gr_comb_nac():
 
 
 def gr_graos():
-    qry = f'SELECT index, quandl_wheat, quandl_soybeans, quandl_cotton, quandl_corn, cepea_trigo_parana, cepea_soja FROM dw_quandl ORDER BY index ASC;'
+    qry = f'SELECT index, quandl_wheat, quandl_soybeans, quandl_cotton, quandl_corn, cepea_trigo_parana, cepea_soja '\
+    'FROM dw_quandl '\
+    'ORDER BY index ASC;'
     df = pd.read_sql_query(qry, con=db)
 
     df = pd.melt(df, id_vars='index')
@@ -163,7 +196,9 @@ def gr_graos():
 
 
 def gr_animais():
-    qry = f'SELECT index, cepea_bezerro, cepea_porco FROM dw_quandl ORDER BY index ASC;'
+    qry = f'SELECT index, cepea_bezerro, cepea_porco '\
+        'FROM dw_quandl '\
+        'ORDER BY index ASC;'
     df = pd.read_sql_query(qry, con=db)
     df = pd.melt(df, id_vars='index')
 
@@ -175,7 +210,9 @@ def gr_animais():
 
 
 def gr_metais():
-    qry = f'SELECT index, quandl_steel_china, quandl_steel_us, quandl_zinc_china FROM dw_quandl ORDER BY index ASC;'
+    qry = f'SELECT index, quandl_steel_china, quandl_steel_us '\
+        'FROM dw_quandl '\
+        'ORDER BY index ASC;'
     df = pd.read_sql_query(qry, con=db)
     df = pd.melt(df, id_vars='index')
 
@@ -186,7 +223,9 @@ def gr_metais():
 
 
 def gr_gasnat():
-    qry = f'SELECT index, quandl_nat_gas_us, quandl_nat_gas_uk FROM dw_quandl ORDER BY index ASC;'
+    qry = f'SELECT index, quandl_nat_gas_us, quandl_nat_gas_uk '\
+        'FROM dw_quandl '\
+        'ORDER BY index ASC;'
     df = pd.read_sql_query(qry, con=db)
 
     df = pd.melt(df, id_vars='index')
