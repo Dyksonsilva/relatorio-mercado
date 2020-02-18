@@ -33,17 +33,17 @@ gr_styles = {'height': 400,
 
 
 def gr_ipca():
-    qry = f'SELECT d2n as Indicador, '\
-        'd3c as Data, '\
-        'value as Valor '\
+    qry = f'SELECT d2n as indicador, '\
+        'd3c as data, '\
+        'value as valor '\
         'FROM dw_ibge '\
         'WHERE d2n LIKE %(filter)s '\
         'ORDER BY d3c ASC;'
     df = pd.read_sql_query(qry, con=db, params={'filter': '%IPCA%'})
 
-    fig = px.line(df, x='Data', y='Valor', color='Indicador')
+    fig = px.line(df, x='data', y='valor', color='indicador')
     fig.update_layout(showlegend=False,
-                      xaxis_title='Data',
+                      xaxis_title='data',
                       yaxis_title='Variação %',
                       title='Variações do IPCA',
                       **gr_styles)
@@ -51,17 +51,17 @@ def gr_ipca():
 
 
 def gr_pimpf():
-    qry = f'SELECT d2n as Indicador, '\
-        'd3c as Data, '\
-        'value as Valor '\
+    qry = f'SELECT d2n as indicador, '\
+        'd3c as data, '\
+        'value as valor '\
         'FROM dw_ibge '\
         'WHERE d2n LIKE %(filter)s '\
         'ORDER BY d3c ASC;'
     df = pd.read_sql_query(qry, con=db, params={'filter': '%IPP%'})
 
-    fig = px.line(df, x='Data', y='Valor', color='Indicador')
+    fig = px.line(df, x='data', y='valor', color='indicador')
     fig.update_layout(showlegend=False,
-                      xaxis_title='Data',
+                      xaxis_title='data',
                       yaxis_title='Variação %',
                       title='Variações do IPP',
                       **gr_styles)
@@ -69,17 +69,17 @@ def gr_pimpf():
 
 
 def gr_pmc():
-    qry = f'SELECT d2n as Indicador, '\
-        'd3c as Data, '\
-        'value as Valor '\
+    qry = f'SELECT d2n as indicador, '\
+        'd3c as data, '\
+        'value as valor '\
         'FROM dw_ibge '\
         'WHERE d2n LIKE %(filter)s '\
         'ORDER BY d3c ASC;'
     df = pd.read_sql_query(qry, con=db, params={'filter': '%comércio%'})
 
-    fig = px.line(df, x='Data', y='Valor', color='Indicador')
+    fig = px.line(df, x='data', y='valor', color='indicador')
     fig.update_layout(showlegend=False,
-                      xaxis_title='Data',
+                      xaxis_title='data',
                       yaxis_title='Variação %',
                       title='Variações dos índices de comércio',
                       **gr_styles)
@@ -87,17 +87,17 @@ def gr_pmc():
 
 
 def gr_pms():
-    qry = f'SELECT d2n as Indicador, '\
-        'd3c as Data, '\
-        'value as Valor '\
+    qry = f'SELECT d2n as indicador, '\
+        'd3c as data, '\
+        'value as valor '\
         'FROM dw_ibge '\
         'WHERE d2n LIKE %(filter)s '\
         'ORDER BY d3c ASC;'
     df = pd.read_sql_query(qry, con=db, params={'filter': '%serviços%'})
 
-    fig = px.line(df, x='Data', y='Valor', color='Indicador')
+    fig = px.line(df, x='data', y='valor', color='indicador')
     fig.update_layout(showlegend=False,
-                      xaxis_title='Data',
+                      xaxis_title='data',
                       yaxis_title='Variação %',
                       title='Variações dos índices de serviços',
                       **gr_styles)
@@ -107,18 +107,18 @@ def gr_pms():
 
 
 def gr_focus():
-    qry = f'SELECT Data, Indicador, Datareferencia as Projecao, Mediana, Desviopadrao '\
+    qry = f'SELECT data, indicador, datareferencia as projecao, Mediana, Desviopadrao '\
         'FROM dw_focus '\
-        'WHERE Indicador LIKE %(filter)s '\
-        'ORDER BY Data, Datareferencia;'
+        'WHERE indicador LIKE %(filter)s '\
+        'ORDER BY data, datareferencia;'
     df = pd.read_sql_query(qry, con=db, params={'filter': '%PIB Total%'})
 
-    #df = df.groupby(['Data', 'indicador']).mean().reset_index()
+    #df = df.groupby(['data', 'indicador']).mean().reset_index()
 
-    fig = px.line(df, x='Data', y='Mediana', color='Projecao', error_y='Desviopadrao')
+    fig = px.line(df, x='data', y='mediana', color='projecao', error_y='desviopadrao')
     fig.update_layout(showlegend=False,
-                      xaxis_title='Data',
-                      yaxis_title='Valor esperado',
+                      xaxis_title='data',
+                      yaxis_title='valor esperado',
                       title='Expectativas de mercado',
                       **gr_styles)
     return fig
@@ -133,7 +133,7 @@ def gr_ptax():
 
     fig = px.line(df.reset_index(), x='data', y='valor')
     fig.update_layout(showlegend=False,
-                      xaxis_title='Data',
+                      xaxis_title='data',
                       yaxis_title='Cotação (R$/1 US$)',
                       title='Dólar PTAX Compra',
                       **gr_styles)
@@ -155,7 +155,7 @@ def gr_comb_intl():
     fig.add_trace(go.Scatter(
         x=df['date'], y=df['oil_nymex'], name='Barril NYMEX'))
     fig.update_layout(showlegend=False,
-                      xaxis_title='Data',
+                      xaxis_title='data',
                       yaxis_title='US$/barril',
                       title='Cotações internacionais do petróleo',
                       **gr_styles)
@@ -171,7 +171,7 @@ def gr_comb_nac():
 
     fig = px.line(df, x='data_inicial', y='media', color='produto')
     fig.update_layout(showlegend=False,
-                      xaxis_title='Data',
+                      xaxis_title='data',
                       yaxis_title='R$/l, R$/13kg (GLP)',
                       title='Preços médios de revenda',
                       **gr_styles)
@@ -186,7 +186,7 @@ def gr_graos():
     'ORDER BY index ASC;'
     df = pd.read_sql_query(qry, con=db)
 
-    df = pd.melt(df, id_vars='data')
+    df = pd.melt(df, id_vars='index')
 
     fig = px.line(df, x='data', y='value', color='variable')
     fig.update_layout(showlegend=False, **gr_styles)
@@ -234,3 +234,5 @@ def gr_gasnat():
                   color='variable')
     fig.update_layout(showlegend=False, **gr_styles)
     return fig
+
+print('Plots loaded!')

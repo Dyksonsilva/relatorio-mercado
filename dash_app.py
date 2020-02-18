@@ -183,6 +183,7 @@ body = dbc.Container([
     className='mt-4'
 )
 
+print('Loading OK!')
 
 app = dash.Dash(__name__, external_stylesheets=[dbc.themes.YETI])
 server = app.server
