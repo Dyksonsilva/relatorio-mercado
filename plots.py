@@ -186,9 +186,9 @@ def gr_graos():
     'ORDER BY index ASC;'
     df = pd.read_sql_query(qry, con=db)
 
-    df = pd.melt(df, id_vars='index')
+    df = pd.melt(df, id_vars='data')
 
-    fig = px.line(df, x='index', y='value', color='variable')
+    fig = px.line(df, x='data', y='value', color='variable')
     fig.update_layout(showlegend=False, **gr_styles)
     return fig
 
@@ -202,7 +202,7 @@ def gr_animais():
     df = pd.read_sql_query(qry, con=db)
     df = pd.melt(df, id_vars='index')
 
-    fig = px.line(df, x='index', y='value', color='variable')
+    fig = px.line(df, x='data', y='value', color='variable')
     fig.update_layout(showlegend=False, **gr_styles)
     return fig
 
@@ -216,7 +216,7 @@ def gr_metais():
     df = pd.read_sql_query(qry, con=db)
     df = pd.melt(df, id_vars='index')
 
-    fig = px.line(df, x='index', y='value',
+    fig = px.line(df, x='data', y='value',
                   color='variable')
     fig.update_layout(showlegend=False, **gr_styles)
     return fig
@@ -228,9 +228,9 @@ def gr_gasnat():
         'ORDER BY index ASC;'
     df = pd.read_sql_query(qry, con=db)
 
-    df = pd.melt(df, id_vars='index')
+    df = pd.melt(df, id_vars='data')
 
-    fig = px.line(df, x='index', y='value',
+    fig = px.line(df, x='data', y='value',
                   color='variable')
     fig.update_layout(showlegend=False, **gr_styles)
     return fig
