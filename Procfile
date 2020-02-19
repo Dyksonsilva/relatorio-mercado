@@ -1,2 +1,2 @@
 web: gunicorn dash_app:server
-worker: python pg_update.py
+worker: python db_update.py

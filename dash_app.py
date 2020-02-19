@@ -68,7 +68,7 @@ body = dbc.Container([
             dcc.Markdown(texts.pmc),
         ]),
         dbc.Col([
-            dcc.Graph(figure=plots.gr_pmc())
+            # dcc.Graph(figure=plots.gr_pmc())
         ]),
     ]),
     # Dados de serviços
@@ -78,7 +78,7 @@ body = dbc.Container([
             dcc.Markdown(texts.pms),
         ]),
         dbc.Col([
-            dcc.Graph(figure=plots.gr_pms())
+            # dcc.Graph(figure=plots.gr_pms())
         ]),
     ]),
     # Preços ao produtor
@@ -88,7 +88,7 @@ body = dbc.Container([
             dcc.Markdown(texts.pimpf),
         ]),
         dbc.Col([
-            dcc.Graph(figure=plots.gr_pimpf())
+            # dcc.Graph(figure=plots.gr_pimpf())
         ])
     ]),
 
@@ -100,7 +100,7 @@ body = dbc.Container([
                 dcc.Markdown(texts.focus)
             ]),
             dbc.Col([
-                dcc.Graph(figure=plots.gr_focus())
+                # dcc.Graph(figure=plots.gr_focus())
             ])
             ]),
     # Dólar PTAX
@@ -110,7 +110,7 @@ body = dbc.Container([
             dcc.Markdown(texts.ptax),
         ]),
         dbc.Col([
-            dcc.Graph(figure=plots.gr_ptax())
+            # dcc.Graph(figure=plots.gr_ptax())
         ]),
     ]),
     # Dados de commodities ------------------------------------------
@@ -122,7 +122,7 @@ body = dbc.Container([
             dcc.Markdown(texts.comb_intl),
         ]),
         dbc.Col([
-            dcc.Graph(figure=plots.gr_comb_intl())
+            # dcc.Graph(figure=plots.gr_comb_intl())
         ]),
     ]),
     dbc.Row([
@@ -130,7 +130,7 @@ body = dbc.Container([
             dcc.Markdown(texts.comb_nac),
         ]),
         dbc.Col([
-            dcc.Graph(figure=plots.gr_comb_nac())
+            # dcc.Graph(figure=plots.gr_comb_nac())
         ]),
     ]),
     # Grãos
@@ -140,7 +140,7 @@ body = dbc.Container([
             dcc.Markdown(texts.graos),
         ]),
         dbc.Col([
-            dcc.Graph(figure=plots.gr_graos())
+            # dcc.Graph(figure=plots.gr_graos())
         ]),
     ]),
     # Animais
@@ -150,7 +150,7 @@ body = dbc.Container([
             dcc.Markdown(texts.animais),
         ]),
         dbc.Col([
-            dcc.Graph(figure=plots.gr_animais())
+            # dcc.Graph(figure=plots.gr_animais())
         ]),
     ]),
     # Metais
@@ -160,7 +160,7 @@ body = dbc.Container([
             dcc.Markdown(texts.metais),
         ]),
         dbc.Col([
-            dcc.Graph(figure=plots.gr_metais())
+            # dcc.Graph(figure=plots.gr_metais())
         ]),
     ]),
     # Gás natural
@@ -170,7 +170,7 @@ body = dbc.Container([
             dcc.Markdown(texts.gasnat),
         ]),
         dbc.Col([
-            dcc.Graph(figure=plots.gr_gasnat())
+            # dcc.Graph(figure=plots.gr_gasnat())
         ])
     ]),
     html.Footer([

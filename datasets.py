@@ -28,6 +28,7 @@ def fixnames(col_names):
 def dw_bacen():
     '''
     Load BACEN data.
+    :return: A :class:`pandas.DataFrame`.
     '''
     # Load dict w/ links
     with open('links_dados.json', 'r') as f:
@@ -63,6 +64,7 @@ def dw_bacen():
 def dw_cme():
     '''
     Load daily CME data.
+    :return: A :class:`pandas.DataFrame`.
     '''
     cme_ftp = FTP('ftp.cmegroup.com')
     cme_ftp.login()
@@ -102,6 +104,7 @@ def dw_cme():
 def dw_combustiveis():
     '''
     Load fossil fuels data
+    :return: A :class:`pandas.DataFrame`.
     '''
     # load dict w/ links
     with open('links_dados.json', 'r') as f:
@@ -159,6 +162,7 @@ def dw_combustiveis():
 def dw_comexstat():
     '''
     Load COMEX STAT data (WIP).
+    :return: A :class:`pandas.DataFrame`.
     '''
     # Data download
     anos = ['2017', '2018', '2019']
@@ -192,6 +196,7 @@ def dw_comexstat():
 def dw_ibge():
     '''
     Load IBGE data.
+    :return: A :class:`pandas.DataFrame`.
     '''
     # load dict w/ links
     with open('links_dados.json', 'r') as f:
@@ -243,6 +248,7 @@ def dw_ibge():
 def dw_noticias():
     '''
     Load headlines from Google News.
+    :return: A :class:`pandas.DataFrame`.
     '''
     # load dict w/ links
     with open('links_dados.json', 'r') as f:
@@ -282,6 +288,7 @@ def dw_noticias():
 def dw_quandl():
     '''
     Load Quandl Data.
+    :return: A :class:`pandas.DataFrame`.
     '''
     # load dict w/ links
     with open('links_dados.json', 'r') as f:
