@@ -10,18 +10,10 @@ import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
 from sqlalchemy import create_engine
+from db_connect import db_connect
 
-# Heroku
-DATABASE_URL = os.getenv('DATABASE_URL')
-
-# local tests
-if DATABASE_URL is None:
-    with open('connection.txt', 'r') as f:
-        DATABASE_URL = f.readlines()[0]
-
-    db = create_engine(DATABASE_URL, connect_args={'sslmode': 'require'})
-
-db = create_engine(DATABASE_URL)
+# establish connection
+cl = db_connect()
 
 # layout options
 gr_styles = {'height': 400,
@@ -33,13 +25,14 @@ gr_styles = {'height': 400,
 
 
 def gr_ipca():
-    qry = f'SELECT d2n as indicador, '\
-        'd3c as data, '\
-        'value as valor '\
-        'FROM dw_ibge '\
-        'WHERE d2n LIKE %(filter)s '\
-        'ORDER BY d3c ASC;'
-    df = pd.read_sql_query(qry, con=db, params={'filter': '%IPCA%'})
+    # qry = f'SELECT d2n as indicador, '\
+    #     'd3c as data, '\
+    #     'value as valor '\
+    #     'FROM dw_ibge '\
+    #     'WHERE d2n LIKE %(filter)s '\
+    #     'ORDER BY d3c ASC;'
+    # df = pd.read_sql_query(qry, con=db, params={'filter': '%IPCA%'})
+    df = pd.DataFrame(cl.ibge.ibge.find({"d2n": ".*IPCA.*"}))
 
     fig = px.line(df, x='data', y='valor', color='indicador')
     fig.update_layout(showlegend=False,
