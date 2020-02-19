@@ -22,6 +22,19 @@ gr_styles = {'height': 400,
                  'family': 'Open Sans'
              }}
 
+# auxiliary function
+def read_mongo(coll, query=None):
+    '''
+    Function to read a MongoDB collection as a pandas DataFrame.
+    :param coll: a collection.
+    :param query: a dict
+    '''
+    if query is None:
+        df = pd.DataFrame(list(coll.find()))
+    else:
+        df = pd.DataFrame(list(coll.find(query)))
+
+    return df
 
 def gr_ipca():
     # qry = f'SELECT d2n as indicador, '\
@@ -31,9 +44,9 @@ def gr_ipca():
     #     'WHERE d2n LIKE %(filter)s '\
     #     'ORDER BY d3c ASC;'
     # df = pd.read_sql_query(qry, con=db, params={'filter': '%IPCA%'})
-    df = pd.DataFrame(cl.ibge.ibge.find({"d2n": ".*IPCA.*"}))
+    df = read_mongo(cl.ibge.ibge)
 
-    fig = px.line(df, x='data', y='valor', color='indicador')
+    fig = px.line(df, x='d3c', y='value', color='d2n')
     fig.update_layout(showlegend=False,
                       xaxis_title='data',
                       yaxis_title='Variação %',
