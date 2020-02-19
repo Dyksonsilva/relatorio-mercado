@@ -7,6 +7,7 @@ import datasets
 import os
 import pandas as pd
 import pymongo
+from db_connect import db_connect
 
 # establish connection
 cl = db_connect()
