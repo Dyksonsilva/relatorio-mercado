@@ -30,21 +30,14 @@ def read_mongo(coll, query=None):
     :param query: a dict
     '''
     if query is None:
-        df = pd.DataFrame(list(coll.find()))
+        df = pd.DataFrame(list(coll.find())).reset_index()
     else:
-        df = pd.DataFrame(list(coll.find(query)))
+        df = pd.DataFrame(list(coll.find(query))).reset_index()
 
     return df
 
 def gr_ipca():
-    # qry = f'SELECT d2n as indicador, '\
-    #     'd3c as data, '\
-    #     'value as valor '\
-    #     'FROM dw_ibge '\
-    #     'WHERE d2n LIKE %(filter)s '\
-    #     'ORDER BY d3c ASC;'
-    # df = pd.read_sql_query(qry, con=db, params={'filter': '%IPCA%'})
-    df = read_mongo(cl.ibge.ibge)
+    df = read_mongo(cl.ibge.ibge, {'d2n': {'$regex': 'IPCA'}})
 
     fig = px.line(df, x='d3c', y='value', color='d2n')
     fig.update_layout(showlegend=False,
@@ -56,15 +49,9 @@ def gr_ipca():
 
 
 def gr_pimpf():
-    qry = f'SELECT d2n as indicador, '\
-        'd3c as data, '\
-        'value as valor '\
-        'FROM dw_ibge '\
-        'WHERE d2n LIKE %(filter)s '\
-        'ORDER BY d3c ASC;'
-    df = pd.read_sql_query(qry, con=db, params={'filter': '%IPP%'})
+    df = read_mongo(cl.ibge.ibge, {'d2n': {'$regex': 'IPP'}})
 
-    fig = px.line(df, x='data', y='valor', color='indicador')
+    fig = px.line(df, x='d3c', y='value', color='d2n')
     fig.update_layout(showlegend=False,
                       xaxis_title='data',
                       yaxis_title='Variação %',
@@ -74,15 +61,9 @@ def gr_pimpf():
 
 
 def gr_pmc():
-    qry = f'SELECT d2n as indicador, '\
-        'd3c as data, '\
-        'value as valor '\
-        'FROM dw_ibge '\
-        'WHERE d2n LIKE %(filter)s '\
-        'ORDER BY d3c ASC;'
-    df = pd.read_sql_query(qry, con=db, params={'filter': '%comércio%'})
+    df = read_mongo(cl.ibge.ibge, {'d2n': {'$regex': 'comércio'}})
 
-    fig = px.line(df, x='data', y='valor', color='indicador')
+    fig = px.line(df, x='d3c', y='value', color='d2n')
     fig.update_layout(showlegend=False,
                       xaxis_title='data',
                       yaxis_title='Variação %',
@@ -92,15 +73,9 @@ def gr_pmc():
 
 
 def gr_pms():
-    qry = f'SELECT d2n as indicador, '\
-        'd3c as data, '\
-        'value as valor '\
-        'FROM dw_ibge '\
-        'WHERE d2n LIKE %(filter)s '\
-        'ORDER BY d3c ASC;'
-    df = pd.read_sql_query(qry, con=db, params={'filter': '%serviços%'})
+    df = read_mongo(cl.ibge.ibge, {'d2n': {'$regex': 'serviços'}})
 
-    fig = px.line(df, x='data', y='valor', color='indicador')
+    fig = px.line(df, x='d3c', y='value', color='d2n')
     fig.update_layout(showlegend=False,
                       xaxis_title='data',
                       yaxis_title='Variação %',
@@ -112,13 +87,7 @@ def gr_pms():
 
 
 def gr_focus():
-    qry = f'SELECT data, indicador, datareferencia as projecao, Mediana, Desviopadrao '\
-        'FROM dw_focus '\
-        'WHERE indicador LIKE %(filter)s '\
-        'ORDER BY data, datareferencia;'
-    df = pd.read_sql_query(qry, con=db, params={'filter': '%PIB Total%'})
-
-    #df = df.groupby(['data', 'indicador']).mean().reset_index()
+    df = read_mongo(cl.bacen.focus, {'indicador': {'$regex': 'PIB Total'}})
 
     fig = px.line(df, x='data', y='mediana', color='projecao', error_y='desviopadrao')
     fig.update_layout(showlegend=False,
@@ -130,13 +99,9 @@ def gr_focus():
 
 
 def gr_ptax():
-    qry = f'SELECT * '\
-        'FROM dw_ptax '\
-        'WHERE data > %(data)s '\
-        'ORDER BY data ASC;'
-    df = pd.read_sql_query(qry, con=db, params={'data': '2017-01-01'})
+    df = read_mongo(cl.bacen.ptax)
 
-    fig = px.line(df.reset_index(), x='data', y='valor')
+    fig = px.line(df[df.data>'2010-01-01'].reset_index(), x='data', y='valor')
     fig.update_layout(showlegend=False,
                       xaxis_title='data',
                       yaxis_title='Cotação (R$/1 US$)',
