@@ -9,7 +9,6 @@ import os
 import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
-from sqlalchemy import create_engine
 from db_connect import db_connect
 
 # establish connection
