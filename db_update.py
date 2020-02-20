@@ -17,7 +17,8 @@ def load_mongo(df, collection):
     Auxiliary function to load pandas DataFrames into our MongoDB cluster.
     '''
     try:
-        collection.insert_many(df.to_dict('records'))
+        collection.delete_many({}) # clear previous data
+        collection.insert_many(df.to_dict('records')) # add data
     except:
         print('Data loading error')
 

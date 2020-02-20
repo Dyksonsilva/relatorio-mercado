@@ -1,8 +1,14 @@
 # Read-me
 
-A dashboard with market indexes for the supply chain department at [SLC Agrícola](https://www.slcagricola.com.br/en/). WORK IN PROGRESS! :warning:
+A dashboard/market report for the supply chain department at [SLC Agrícola](https://www.slcagricola.com.br/en/). WORK IN PROGRESS! :warning:
 
 Scripted in Python with [Dash](https://dash.plot.ly/).
+
+## Structure
+
+The front-end is described in `dash_app.py`, using the Dash framework and [Dash Bootstrap Components](https://dash-bootstrap-components.opensource.faculty.ai/) to help with the styling. The app is hosted on [Heroku](https://heroku.com/), a platform for rapid  web app development, which serves a dynamic web page.
+
+Market data and statistics are retrieved from the web (in `datasets.py`) and stored (in `db_update.py`) in a [MongoDB cluster](https://cloud.mongodb.com/), to be later queried by the website. A non-relational database was chosen due to greater flexibility.
 
 ## Run
 
@@ -12,8 +18,4 @@ To execute in a local environment:
 $ python dash_app.py
 ```
 
-Dependencies: in `requirements.txt`.
-
-## In progress
-
-Host in a cloud platform. First iteration: [Heroku](https://www.heroku.com/).
+Use `requirements.txt` to find the dependencies and set up a virtual environment.
