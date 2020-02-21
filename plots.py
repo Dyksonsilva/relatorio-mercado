@@ -9,6 +9,7 @@ import os
 import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
+
 from db_connect import db_connect
 
 # establish connection
@@ -17,6 +18,7 @@ cl = db_connect()
 # layout options
 gr_styles = {'height': 400,
              'width': 500,
+             'plot_bgcolor': '#eee',
              'template': 'plotly_white',
              'font': {
                  'family': 'Open Sans'
