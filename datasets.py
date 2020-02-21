@@ -414,3 +414,40 @@ def dw_fretes():
     df_fretes.columns = fixnames(df_fretes.columns)
 
     return df_fretes
+
+@retry(ConnectionError, tries=5, delay=1)
+def aco_brasil(y='2020',m='02'):
+    '''
+    Get information from Brazilian steel production data.
+    '''
+
+    url = 'https://institutoacobrasil.net.br/site/wp-content/uploads/{0}/{1}/PERFORMANCE-MENSAL_MERCADO.xls'.format(y,m)
+
+    try:
+        df_aco = pd.read_excel(url, skiprows=6)
+    except:
+        return None
+
+    # data cleaning
+    df_aco.iloc[1,0] = 'Mês'
+
+    # drop null lines
+    inds = df_aco.iloc[:,0].dropna().index
+    df_aco = df_aco.loc[inds]
+
+    # transpose
+    df_aco = df_aco.T
+    df_aco.columns = df_aco.iloc[0,:]
+    df_aco = df_aco.iloc[1:,:]
+    df_aco['ESPECIFICAÇÃO'] = df_aco['ESPECIFICAÇÃO'].ffill()
+    df_aco['Data'] = df_aco['Mês'].str.lower()+"/"+df_aco['ESPECIFICAÇÃO']
+
+    # select columns
+    df_aco = df_aco.iloc[:,2:]
+
+    # remove remaining nulls
+    df_aco.dropna(axis=0, subset=['Data'], inplace=True)
+    df_aco.dropna(axis=1, how='all', inplace=True)
+    df_aco.reset_index(drop=True, inplace=True)
+
+    return df_aco
