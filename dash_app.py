@@ -68,7 +68,7 @@ body = dbc.Container([
             dcc.Markdown(texts.pmc),
         ]),
         dbc.Col([
-            # dcc.Graph(figure=plots.gr_pmc())
+            dcc.Graph(figure=plots.gr_pmc())
         ]),
     ]),
     # Dados de serviços
@@ -78,7 +78,7 @@ body = dbc.Container([
             dcc.Markdown(texts.pms),
         ]),
         dbc.Col([
-            # dcc.Graph(figure=plots.gr_pms())
+            dcc.Graph(figure=plots.gr_pms())
         ]),
     ]),
     # Preços ao produtor
@@ -86,6 +86,16 @@ body = dbc.Container([
     dbc.Row([
         dbc.Col([
             dcc.Markdown(texts.pimpf),
+        ]),
+        dbc.Col([
+            dcc.Graph(figure=plots.gr_pimpf())
+        ])
+    ]),
+    # Construção civil
+    html.H2('Construção civil'),
+    dbc.Row([
+        dbc.Col([
+            dcc.Markdown(texts.constr),
         ]),
         dbc.Col([
             # dcc.Graph(figure=plots.gr_pimpf())
