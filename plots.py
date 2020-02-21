@@ -9,7 +9,9 @@ import os
 import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
-from db_connect import db_connect
+from dash_app import app
+from dash.dependencies import Input, Output
+from db_interface import db_connect, read_mongo
 
 # establish connection
 cl = db_connect()
@@ -22,22 +24,12 @@ gr_styles = {'height': 400,
                  'family': 'Open Sans'
              }}
 
-# auxiliary function
-def read_mongo(coll, query=None):
-    '''
-    Function to read a MongoDB collection as a pandas DataFrame.
-    :param coll: a collection.
-    :param query: a dict
-    '''
-    if query is None:
-        df = pd.DataFrame(list(coll.find())).reset_index()
-    else:
-        df = pd.DataFrame(list(coll.find(query))).reset_index()
 
-    return df
-
-def gr_ipca():
-    df = read_mongo(cl.ibge.ibge, {'d2n': {'$regex': 'IPCA'}})
+@app.callback(
+    Output('plots-ipca','figure'),
+    Input('dropdown-ipca','value'))
+def gr_ipca(filt):
+    df = read_mongo(cl.ibge.ibge, {'d2n': filt})
 
     fig = px.line(df, x='d3c', y='value', color='d2n')
     fig.update_layout(showlegend=False,
