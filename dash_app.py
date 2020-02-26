@@ -9,6 +9,7 @@ import os
 import dash
 import dash_bootstrap_components as dbc
 import dash_core_components as dcc
+from dash.dependencies import Input, Output
 import dash_html_components as html
 import numpy as np
 import pandas as pd
@@ -30,10 +31,12 @@ gr_styles = {'height': 400,
                  'family': 'Open Sans'
              }}
 
-
-
-def gr_ipca():
-    df = read_mongo(cl.ibge.ibge, {'d2n': {'$regex': 'IPCA'}})
+@app.callback(
+    Output('gr-ipca', 'figure'),
+    Input('drop-ipca','value')
+)
+def gr_ipca(filt):
+    df = read_mongo(cl.ibge.ibge, {'d2n': {'$regex': filt}})
 
     fig = px.line(df, x='d3c', y='value', color='d2n')
     fig.update_layout(showlegend=False,
@@ -85,7 +88,8 @@ def gr_pms():
 def gr_focus():
     df = read_mongo(cl.bacen.focus, {'indicador': {'$regex': 'PIB Total'}})
 
-    fig = px.line(df, x='data', y='mediana', color='projecao', error_y='desviopadrao')
+    fig = px.line(df, x='data', y='mediana',
+                  color='projecao', error_y='desviopadrao')
     fig.update_layout(showlegend=False,
                       xaxis_title='data',
                       yaxis_title='valor esperado',
@@ -97,7 +101,8 @@ def gr_focus():
 def gr_ptax():
     df = read_mongo(cl.bacen.ptax)
 
-    fig = px.line(df[df.data>'2010-01-01'].reset_index(), x='data', y='valor')
+    fig = px.line(df[df.data > '2010-01-01'].reset_index(),
+                  x='data', y='valor')
     fig.update_layout(showlegend=False,
                       xaxis_title='data',
                       yaxis_title='Cotação (R$/1 US$)',
@@ -201,6 +206,7 @@ def gr_gasnat():
     fig.update_layout(showlegend=False, **gr_styles)
     return fig
 
+
 print('Plots loaded!')
 
 
@@ -232,7 +238,8 @@ navbar = dbc.NavbarSimple(
 # structure
 body = dbc.Container([
     # Card inicial --------------------------------------------------
-    dcc.Markdown('[Angelo Salton - Suprimentos SLC Agrícola S.A.](mailto:angelo.salton@slcagricola.com.br?subject=Relatório%20de%20Mercado%20Suprimentos) - Atualizado em {0}'.format(datetime.datetime.now().strftime('%d/%m/%Y, %H:%M'))),
+    dcc.Markdown('[Angelo Salton - Suprimentos SLC Agrícola S.A.](mailto:angelo.salton@slcagricola.com.br?subject=Relatório%20de%20Mercado%20Suprimentos) - Atualizado em {0}'.format(
+        datetime.datetime.now().strftime('%d/%m/%Y, %H:%M'))),
     # Notícias ------------------------------------------------------
     html.H1('Notícias'),
     dbc.Row([
@@ -248,7 +255,11 @@ body = dbc.Container([
                 dcc.Markdown(texts.ipca)
             ]),
             dbc.Col([
-                dcc.Graph(figure=gr_ipca())
+                dcc.Dropdown(
+                    id='drop-ipca',
+                    options=[{'label': i, 'value': i} for i in cl.ibge.ibge.find({'d2n': {'$regex': 'IPCA'}}).distinct('d2n')]
+                ),
+                dcc.Graph(id='gr-ipca')
             ])
             ]),
     # Dados de comércio
@@ -380,15 +391,15 @@ body = dbc.Container([
         'background-color': 'green'
     })
 ],
-    className='mt-4'
+    className = 'mt-4'
 )
 
 print('Loading OK!')
 
-app = dash.Dash(__name__, external_stylesheets=[dbc.themes.YETI])
-server = app.server
+app=dash.Dash(__name__, external_stylesheets = [dbc.themes.YETI])
+server=app.server
 
-app.layout = html.Div([navbar, body])
+app.layout=html.Div([navbar, body])
 
 if __name__ == "__main__":
-    app.run_server(debug=True)
+    app.run_server(debug = True)

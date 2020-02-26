@@ -4,6 +4,7 @@
 # Establish connection to MongoDB database
 
 import os
+import pandas as pd
 import pymongo
 from retry import retry
 
