@@ -402,5 +402,7 @@ print('Loading OK!')
 
 app.layout=html.Div([navbar, body])
 
+print('Loading OK!')
+
 if __name__ == "__main__":
     app.run_server(debug = True)
