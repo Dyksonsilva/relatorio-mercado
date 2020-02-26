@@ -7,38 +7,48 @@ import datasets
 import os
 import pandas as pd
 import pymongo
-from db_interface import db_connect, write_mongo
+from db_connect import db_connect
 
 # establish connection
 cl = db_connect()
+
+def load_mongo(df, collection):
+    '''
+    Auxiliary function to load pandas DataFrames into our MongoDB cluster.
+    '''
+    try:
+        collection.delete_many({}) # clear previous data
+        collection.insert_many(df.to_dict('records')) # add data
+    except:
+        print('Data loading error')
 
 # load into database
 # client.database.collection
 
 df_ibge = datasets.dw_ibge()
-write_mongo(df_ibge, cl.ibge.ibge)
+load_mongo(df_ibge, cl.ibge.ibge)
 
 df_quandl = datasets.dw_quandl()
-write_mongo(df_quandl, cl.quandl.quandl)
+load_mongo(df_quandl, cl.quandl.quandl)
 
 df_combustiveis = datasets.dw_combustiveis()
-write_mongo(df_combustiveis[0], cl.prices.anp)
-write_mongo(df_combustiveis[1], cl.prices.oil)
+load_mongo(df_combustiveis[0], cl.prices.anp)
+load_mongo(df_combustiveis[1], cl.prices.oil)
 
 df_bacen = datasets.dw_bacen()
-write_mongo(df_bacen[0], cl.bacen.ptax)
-write_mongo(df_bacen[1], cl.bacen.focus)
+load_mongo(df_bacen[0], cl.bacen.ptax)
+load_mongo(df_bacen[1], cl.bacen.focus)
 
 df_cme = datasets.dw_cme()
-write_mongo(df_cme, cl.cme.settle)
+load_mongo(df_cme, cl.cme.settle)
 
 df_scot = datasets.dw_scot()
-write_mongo(df_scot, cl.prices.scot)
+load_mongo(df_scot, cl.prices.scot)
 
 df_china = datasets.dw_china()
-write_mongo(df_china, cl.prices.china)
+load_mongo(df_china, cl.prices.china)
 
 df_noticias = datasets.dw_noticias()
-write_mongo(df_noticias, cl.news.google)
+load_mongo(df_noticias, cl.news.google)
 
 print('Data upload OK!')

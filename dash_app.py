@@ -14,10 +14,6 @@ import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
 import texts
-from db_interface import db_connect, read_mongo
-
-# establish connection
-cl = db_connect()
 
 # navbar
 navbar = dbc.NavbarSimple(
@@ -62,12 +58,7 @@ body = dbc.Container([
                 dcc.Markdown(texts.ipca)
             ]),
             dbc.Col([
-                dcc.Dropdown(
-                    id='dropdown-ipca',
-                    options=[{'label': i, 'value': i} for i in cl.ibge.ibge.distinct('d2n')],
-                    value='INPC - Variação mensal'
-                ),
-                dcc.Graph(id='plots-ipca')
+                dcc.Graph(figure=plots.gr_ipca())
             ])
             ]),
     # Dados de comércio
