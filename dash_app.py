@@ -19,6 +19,10 @@ import plotly.graph_objects as go
 import texts
 from db_interface import *
 
+# app declaration
+app=dash.Dash(__name__, external_stylesheets = [dbc.themes.YETI])
+server=app.server
+
 # establish database connection
 cl = db_connect()
 
@@ -394,12 +398,9 @@ body = dbc.Container([
     className = 'mt-4'
 )
 
-print('Loading OK!')
-
-app=dash.Dash(__name__, external_stylesheets = [dbc.themes.YETI])
-server=app.server
-
 app.layout=html.Div([navbar, body])
+
+print('Loading OK!')
 
 if __name__ == "__main__":
     app.run_server(debug = True)
