@@ -210,6 +210,8 @@ body = dbc.Container([
     className = 'mt-4'
 )
 
+app.layout=html.Div([navbar, body])
+
 # plots =======================================================================
 # layout options
 gr_styles = {'height': 400,
@@ -394,10 +396,6 @@ def gr_gasnat():
     fig.update_layout(showlegend=False, **gr_styles)
     return fig
 
-
-print('Loading OK!')
-
-app.layout=html.Div([navbar, body])
 
 print('Loading OK!')
 
