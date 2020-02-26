@@ -1,5 +1,5 @@
 {
-    "BACEN PTAX": "https://api.bcb.gov.br/dados/serie/bcdata.sgs.1/dados/ultimos/1000?formato=csv",
+    "BACEN PTAX": "https://api.bcb.gov.br/dados/serie/bcdata.sgs.1/dados/ultimos/2000?formato=csv",
     "CEPEA Bezerro": "https://www.quandl.com/api/v3/datasets/CEPEA/CALF_C.csv?start_date=2010-01-01&api_key={0}",
     "CEPEA Algodao": "https://www.quandl.com/api/v3/datasets/CEPEA/COTTON_D.csv?start_date=2010-01-01&api_key={0}",
     "CEPEA Acucar": "https://www.quandl.com/api/v3/datasets/CEPEA/SUGAR_C.csv?start_date=2010-01-01&api_key={0}",
@@ -32,7 +32,7 @@
     "ANP Semanal": "http://www.anp.gov.br/images/Precos/Semanal2013/SEMANAL_MUNICIPIOS-2019.xlsx",
     "Oil NYMEX": "https://www.quandl.com/api/v3/datasets/CHRIS/CME_UB1.csv?api_key={0}&start_date=2010-01-01&column_index=6",
     "Oil WTI": "https://www.quandl.com/api/v3/datasets/CHRIS/CME_CS1.csv?api_key={0}&start_date=2010-01-01&column_index=6",
-    "BACEN FOCUS": "https://olinda.bcb.gov.br/olinda/servico/Expectativas/versao/v1/odata/ExpectativasMercadoAnuais?$top=1000&$filter=Data%20gt%20'2019-01-01'&$orderby=Data%20asc&$format=text/csv&$select=Indicador,IndicadorDetalhe,Data,DataReferencia,Mediana,DesvioPadrao",
+    "BACEN FOCUS": "https://olinda.bcb.gov.br/olinda/servico/Expectativas/versao/v1/odata/ExpectativasMercadoAnuais?$filter=Data%20gt%20'2019-01-01'&$orderby=Data%20asc&$format=text/csv&$select=Indicador,IndicadorDetalhe,Data,DataReferencia,Mediana,DesvioPadrao",
     "USDA Catalog": "https://www.usda.gov/data.json",
     "USDA FAS": "https://apps.fas.usda.gov/psdonline/downloads/psd_alldata_csv.zip",
     "CME COMEX Futures": "ftp://ftp.cmegroup.com/pub/settle/comex_future.csv",

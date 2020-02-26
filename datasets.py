@@ -92,8 +92,8 @@ def dw_cme():
     df_cme = cbot[cbot['Sym'].isin(lista)]
 
     # return summarized table
-    df_cme = df_cme.groupby(['BizDt', 'Sym', 'MatDt', 'PutCall'])[
-        'SettlePrice'].max().reset_index()
+    # df_cme = df_cme.groupby(['BizDt', 'Sym', 'MatDt', 'PutCall'])[
+        # 'SettlePrice'].max().reset_index()
 
     df_cme.columns = fixnames(df_cme.columns)
 
@@ -122,18 +122,18 @@ def dw_combustiveis():
         ['NORDESTE', 'CENTRO OESTE', 'SUDESTE'])]
 
     # return summarized table
-    df_anp = df_anp.groupby(['DATA INICIAL', 'PRODUTO', 'REGIÃO']).agg({
-        'PREÇO MÉDIO REVENDA': 'mean',
-        'DESVIO PADRÃO REVENDA': 'mean',
-        'PREÇO MÍNIMO REVENDA': 'min',
-        'PREÇO MÁXIMO REVENDA': 'max',
-        'PREÇO MÉDIO DISTRIBUIÇÃO': 'mean',
-        'DESVIO PADRÃO DISTRIBUIÇÃO': 'mean',
-        'PREÇO MÍNIMO DISTRIBUIÇÃO': 'min',
-        'PREÇO MÁXIMO DISTRIBUIÇÃO': 'max',
-        'MARGEM MÉDIA REVENDA': 'mean',
-    }
-    ).reset_index()
+    # df_anp = df_anp.groupby(['DATA INICIAL', 'PRODUTO', 'REGIÃO']).agg({
+    #     'PREÇO MÉDIO REVENDA': 'mean',
+    #     'DESVIO PADRÃO REVENDA': 'mean',
+    #     'PREÇO MÍNIMO REVENDA': 'min',
+    #     'PREÇO MÁXIMO REVENDA': 'max',
+    #     'PREÇO MÉDIO DISTRIBUIÇÃO': 'mean',
+    #     'DESVIO PADRÃO DISTRIBUIÇÃO': 'mean',
+    #     'PREÇO MÍNIMO DISTRIBUIÇÃO': 'min',
+    #     'PREÇO MÁXIMO DISTRIBUIÇÃO': 'max',
+    #     'MARGEM MÉDIA REVENDA': 'mean',
+    # }
+    # ).reset_index()
 
     df_anp.columns = fixnames(df_anp.columns)
 
@@ -236,8 +236,8 @@ def dw_ibge():
 
     # average observations by location
     # to reduce data size
-    temp = df_ibge.melt(id_vars=['D3C', 'D2N', 'D1N'], value_vars=['V'])
-    df_ibge = temp.groupby(['D3C', 'D2N']).mean().reset_index()
+    # temp = df_ibge.melt(id_vars=['D3C', 'D2N', 'D1N'], value_vars=['V'])
+    # df_ibge = temp.groupby(['D3C', 'D2N']).mean().reset_index()
 
     df_ibge.columns = fixnames(df_ibge.columns)
 
@@ -416,7 +416,7 @@ def dw_fretes():
     return df_fretes
 
 @retry(ConnectionError, tries=5, delay=1)
-def aco_brasil(y='2020',m='02'):
+def dw_acobrasil(y='2020',m='02'):
     '''
     Get information from Brazilian steel production data.
     '''
