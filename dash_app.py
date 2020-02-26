@@ -226,9 +226,9 @@ gr_styles = {'height': 400,
     Output('gr-ipca', 'figure'),
     [Input('drop-ipca','value')])
 def gr_ipca(filt):
-    df = read_mongo(cl.ibge.ibge, {'d2n': {'$regex': filt}})
+    df = read_mongo(cl.ibge.ibge, {'d2n': {'$regex': str(filt)}})
 
-    fig = px.line(df, x='d3c', y='value', color='d2n')
+    fig = px.line(df, x='d3c', y='v', color='d2n')
     fig.update_layout(showlegend=False,
                       xaxis_title='data',
                       yaxis_title='Variação %',
@@ -240,7 +240,7 @@ def gr_ipca(filt):
 def gr_pimpf():
     df = read_mongo(cl.ibge.ibge, {'d2n': {'$regex': 'IPP'}})
 
-    fig = px.line(df, x='d3c', y='value', color='d2n')
+    fig = px.line(df, x='d3c', y='v', color='d2n')
     fig.update_layout(showlegend=False,
                       xaxis_title='data',
                       yaxis_title='Variação %',
@@ -252,7 +252,7 @@ def gr_pimpf():
 def gr_pmc():
     df = read_mongo(cl.ibge.ibge, {'d2n': {'$regex': 'comércio'}})
 
-    fig = px.line(df, x='d3c', y='value', color='d2n')
+    fig = px.line(df, x='d3c', y='v', color='d2n')
     fig.update_layout(showlegend=False,
                       xaxis_title='data',
                       yaxis_title='Variação %',
@@ -264,7 +264,7 @@ def gr_pmc():
 def gr_pms():
     df = read_mongo(cl.ibge.ibge, {'d2n': {'$regex': 'serviços'}})
 
-    fig = px.line(df, x='d3c', y='value', color='d2n')
+    fig = px.line(df, x='d3c', y='v', color='d2n')
     fig.update_layout(showlegend=False,
                       xaxis_title='data',
                       yaxis_title='Variação %',
