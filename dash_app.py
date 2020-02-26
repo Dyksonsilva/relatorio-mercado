@@ -4,17 +4,15 @@
 # Market report dashboard for supply chain at SLC Agrícola S. A.
 
 import datetime
-import os
 
 import dash
 import dash_bootstrap_components as dbc
 import dash_core_components as dcc
-from dash.dependencies import Input, Output
 import dash_html_components as html
-import numpy as np
 import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
+from dash.dependencies import Input, Output
 
 import texts
 from db_interface import *
@@ -75,13 +73,16 @@ body = dbc.Container([
                     id='drop-ipca-filt',
                     options=[{'label': i, 'value': i} for i in cl.ibge.ibge.find(
                         {'d2n': {'$regex': 'IPCA'}}).distinct('d2n')],
-                    value='IPCA15 - Variação mensal'
+                    value='IPCA15 - Variação acumulada em 12 meses',
+                    clearable=False
                 ),
                 dcc.Dropdown(
                     id='drop-ipca-grupo',
                     options=[{'label': i, 'value': i} for i in cl.ibge.ibge.find(
                         {'d2n': {'$regex': 'IPCA'}}).distinct('d4n')],
-                    value='Índice geral'
+                    value=['Índice geral'],
+                    multi=True,
+                    clearable=False
                 ),
                 dcc.Graph(id='gr-ipca')
             ])
@@ -235,8 +236,13 @@ gr_styles = {'height': 400,
     [Input('drop-ipca-filt', 'value'),
      Input('drop-ipca-grupo', 'value')])
 def gr_ipca(filt, grupo):
-    df = read_mongo(cl.ibge.ibge, {'d2n': {'$regex': str(filt)}, 'd4n': {'$regex': str(grupo)}})
-    df = df[['d3c','d4n','d1n','v']].groupby(['d3c','d4n']).mean().reset_index()
+    df = read_mongo(
+        cl.ibge.ibge, {'d2n': {'$regex': str(filt)}})
+    df = df[df['d4n'].isin(list(grupo))]
+
+    # format database for plotting
+    df = df[['d3c', 'd4n', 'd1n', 'v']].groupby(
+        ['d3c', 'd4n']).mean().reset_index()
 
     fig = px.line(df, x='d3c', y='v', color='d4n')
     fig.update_layout(showlegend=False,

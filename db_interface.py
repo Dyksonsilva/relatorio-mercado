@@ -15,7 +15,6 @@ def db_connect():
     # Heroku
     MONGODB_URL = os.getenv('MONGODB_URL')
     cl = pymongo.MongoClient(MONGODB_URL)
-    return cl
 
     # local tests
     if MONGODB_URL is None:
@@ -24,6 +23,8 @@ def db_connect():
 
         cl = pymongo.MongoClient(MONGODB_URL)
         return cl
+
+    return cl
 
 # auxiliary function
 def read_mongo(coll, query=None):
