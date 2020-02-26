@@ -73,7 +73,8 @@ body = dbc.Container([
             dbc.Col([
                 dcc.Dropdown(
                     id='drop-ipca',
-                    options=[{'label': i, 'value': i} for i in cl.ibge.ibge.find({'d2n': {'$regex': 'IPCA'}}).distinct('d2n')]
+                    options=[{'label': i, 'value': i} for i in cl.ibge.ibge.find({'d2n': {'$regex': 'IPCA'}}).distinct('d2n')],
+                    value='Selecione'
                 ),
                 dcc.Graph(id='gr-ipca')
             ])
@@ -209,6 +210,8 @@ body = dbc.Container([
 ],
     className = 'mt-4'
 )
+
+app.layout=html.Div([navbar, body])
 
 # plots =======================================================================
 # layout options
@@ -394,10 +397,6 @@ def gr_gasnat():
     fig.update_layout(showlegend=False, **gr_styles)
     return fig
 
-
-print('Loading OK!')
-
-app.layout=html.Div([navbar, body])
 
 print('Loading OK!')
 
