@@ -224,8 +224,7 @@ gr_styles = {'height': 400,
 
 @app.callback(
     Output('gr-ipca', 'figure'),
-    Input('drop-ipca','value')
-)
+    [Input('drop-ipca','value')])
 def gr_ipca(filt):
     df = read_mongo(cl.ibge.ibge, {'d2n': {'$regex': filt}})
 
