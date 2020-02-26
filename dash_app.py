@@ -236,7 +236,12 @@ gr_styles = {'height': 400,
      Input('drop-ipca-grupo', 'value')])
 def gr_ipca(filt, grupo):
     df = read_mongo(cl.ibge.ibge, {'d2n': {'$regex': str(filt)}, 'd4n': {'$regex': str(grupo)}})
+<<<<<<< HEAD
     df = df[['d3c','d4n','d1n','v']].groupby(['d3c','d4n']).mean().reset_index()
+=======
+
+    df = df[['d3c','d4n','d1n','v']].groupby(['d3c','d4n']).mean()
+>>>>>>> dea0f0b418afd2c945fe4ab36343142e6e03eb12
 
     fig = px.line(df, x='d3c', y='v', color='d4n')
     fig.update_layout(showlegend=False,
