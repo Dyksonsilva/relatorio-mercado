@@ -20,8 +20,8 @@ import texts
 from db_interface import *
 
 # app declaration
-app=dash.Dash(__name__, external_stylesheets = [dbc.themes.YETI])
-server=app.server
+app = dash.Dash(__name__, external_stylesheets=[dbc.themes.YETI])
+server = app.server
 
 # establish database connection
 cl = db_connect()
@@ -72,8 +72,21 @@ body = dbc.Container([
             ]),
             dbc.Col([
                 dcc.Dropdown(
-                    id='drop-ipca',
-                    options=[{'label': i, 'value': i} for i in cl.ibge.ibge.find({'d2n': {'$regex': 'IPCA'}}).distinct('d2n')],
+                    id='drop-ipca-filt',
+                    options=[{'label': i, 'value': i} for i in cl.ibge.ibge.find(
+                        {'d2n': {'$regex': 'IPCA'}}).distinct('d2n')],
+                    value='Selecione'
+                ),
+                dcc.Dropdown(
+                    id='drop-ipca-grupo',
+                    options=[{'label': i, 'value': i} for i in cl.ibge.ibge.find(
+                        {'d2n': {'$regex': 'IPCA'}}).distinct('d4n')],
+                    value='Selecione'
+                ),
+                dcc.Dropdown(
+                    id='drop-ipca-uf',
+                    options=[{'label': i, 'value': i} for i in cl.ibge.ibge.find(
+                        {'d2n': {'$regex': 'IPCA'}}).distinct('d1n')],
                     value='Selecione'
                 ),
                 dcc.Graph(id='gr-ipca')
@@ -208,10 +221,10 @@ body = dbc.Container([
         'background-color': 'green'
     })
 ],
-    className = 'mt-4'
+    className='mt-4'
 )
 
-app.layout=html.Div([navbar, body])
+app.layout = html.Div([navbar, body])
 
 # plots =======================================================================
 # layout options
@@ -222,13 +235,19 @@ gr_styles = {'height': 400,
                  'family': 'Open Sans'
              }}
 
+
 @app.callback(
     Output('gr-ipca', 'figure'),
-    [Input('drop-ipca','value')])
-def gr_ipca(filt):
-    df = read_mongo(cl.ibge.ibge, {'d2n': {'$regex': str(filt)}})
+    [Input('drop-ipca-filt', 'value'),
+     Input('drop-ipca-grupo', 'value'),
+     Input('drop-ipca-uf', 'value')])
+def gr_ipca(filt, grupo, uf):
+    df = read_mongo(cl.ibge.ibge, ({'d2n': {'$regex': str(filt)}, 'd4n': {
+                    '$regex': str(grupo)}, 'd1n': {'$regex': str(uf)}}, {'_id': 0, 'mn': 0, 'nn': 0}))
 
-    fig = px.line(df, x='d3c', y='v', color='d2n')
+    df = df.groupby(['d3c','d4n']).mean()
+
+    fig = px.line(df, x='d3c', y='v', color='d4n')
     fig.update_layout(showlegend=False,
                       xaxis_title='data',
                       yaxis_title='Variação %',
@@ -343,8 +362,8 @@ def gr_comb_nac():
 
 def gr_graos():
     qry = f'SELECT index as data, quandl_wheat, quandl_soybeans, quandl_cotton, quandl_corn, cepea_trigo_parana, cepea_soja '\
-    'FROM dw_quandl '\
-    'ORDER BY data ASC;'
+        'FROM dw_quandl '\
+        'ORDER BY data ASC;'
     df = pd.read_sql_query(qry, con=db)
 
     df = pd.melt(df, id_vars='data')
@@ -400,4 +419,4 @@ def gr_gasnat():
 print('Loading OK!')
 
 if __name__ == "__main__":
-    app.run_server(debug = True)
+    app.run_server(debug=True)
