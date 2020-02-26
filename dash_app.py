@@ -75,19 +75,13 @@ body = dbc.Container([
                     id='drop-ipca-filt',
                     options=[{'label': i, 'value': i} for i in cl.ibge.ibge.find(
                         {'d2n': {'$regex': 'IPCA'}}).distinct('d2n')],
-                    value='Selecione'
+                    value='IPCA15 - Variação mensal'
                 ),
                 dcc.Dropdown(
                     id='drop-ipca-grupo',
                     options=[{'label': i, 'value': i} for i in cl.ibge.ibge.find(
                         {'d2n': {'$regex': 'IPCA'}}).distinct('d4n')],
-                    value='Selecione'
-                ),
-                dcc.Dropdown(
-                    id='drop-ipca-uf',
-                    options=[{'label': i, 'value': i} for i in cl.ibge.ibge.find(
-                        {'d2n': {'$regex': 'IPCA'}}).distinct('d1n')],
-                    value='Selecione'
+                    value='Índice geral'
                 ),
                 dcc.Graph(id='gr-ipca')
             ])
@@ -239,13 +233,10 @@ gr_styles = {'height': 400,
 @app.callback(
     Output('gr-ipca', 'figure'),
     [Input('drop-ipca-filt', 'value'),
-     Input('drop-ipca-grupo', 'value'),
-     Input('drop-ipca-uf', 'value')])
-def gr_ipca(filt, grupo, uf):
-    df = read_mongo(cl.ibge.ibge, ({'d2n': {'$regex': str(filt)}, 'd4n': {
-                    '$regex': str(grupo)}, 'd1n': {'$regex': str(uf)}}, {'_id': 0, 'mn': 0, 'nn': 0}))
-
-    df = df.groupby(['d3c','d4n']).mean()
+     Input('drop-ipca-grupo', 'value')])
+def gr_ipca(filt, grupo):
+    df = read_mongo(cl.ibge.ibge, {'d2n': {'$regex': str(filt)}, 'd4n': {'$regex': str(grupo)}})
+    df = df[['d3c','d4n','d1n','v']].groupby(['d3c','d4n']).mean().reset_index()
 
     fig = px.line(df, x='d3c', y='v', color='d4n')
     fig.update_layout(showlegend=False,
