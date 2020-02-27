@@ -6,7 +6,7 @@
 import os
 import pandas as pd
 import pymongo
-from retry import retry
+
 
 def db_connect():
     '''
@@ -27,6 +27,8 @@ def db_connect():
     return cl
 
 # auxiliary function
+
+
 def read_mongo(coll, query=None):
     '''
     Function to read a MongoDB collection as a pandas DataFrame.
@@ -40,12 +42,13 @@ def read_mongo(coll, query=None):
 
     return df
 
+
 def write_mongo(df, collection):
     '''
     Auxiliary function to load pandas DataFrames into our MongoDB cluster.
     '''
     try:
-        collection.delete_many({}) # clear previous data
-        collection.insert_many(df.to_dict('records')) # add data
+        collection.delete_many({})  # clear previous data
+        collection.insert_many(df.to_dict('records'))  # add data
     except:
         print('Data loading error')

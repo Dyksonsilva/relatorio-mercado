@@ -5,8 +5,6 @@
 
 import re
 import os
-import urllib
-import numpy as np
 from ftplib import FTP
 import pandas as pd
 import requests
@@ -18,11 +16,14 @@ import xmltodict
 api_quandl = os.getenv('api_quandl')
 
 # fix column names
+
+
 def fixnames(col_names):
     out = [item.lower() for item in col_names]
-    out = [item.replace(' ','_') for item in out]
-    out = [re.sub('[$\/]','', item) for item in out]
+    out = [item.replace(' ', '_') for item in out]
+    out = [re.sub('[$\/]', '', item) for item in out]
     return out
+
 
 @retry(ConnectionError, tries=5, delay=1)
 def dw_bacen():
@@ -93,7 +94,7 @@ def dw_cme():
 
     # return summarized table
     # df_cme = df_cme.groupby(['BizDt', 'Sym', 'MatDt', 'PutCall'])[
-        # 'SettlePrice'].max().reset_index()
+    # 'SettlePrice'].max().reset_index()
 
     df_cme.columns = fixnames(df_cme.columns)
 
@@ -279,7 +280,7 @@ def dw_noticias():
     df_goog.columns = fixnames(df_goog.columns)
 
     # select columns
-    df_goog = df_goog[['title','link','pubdate','source']]
+    df_goog = df_goog[['title', 'link', 'pubdate', 'source']]
 
     return df_goog
 
@@ -415,13 +416,15 @@ def dw_fretes():
 
     return df_fretes
 
+
 @retry(ConnectionError, tries=5, delay=1)
-def dw_acobrasil(y='2020',m='02'):
+def dw_acobrasil(y='2020', m='02'):
     '''
     Get information from Brazilian steel production data.
     '''
 
-    url = 'https://institutoacobrasil.net.br/site/wp-content/uploads/{0}/{1}/PERFORMANCE-MENSAL_MERCADO.xls'.format(y,m)
+    url = 'https://institutoacobrasil.net.br/site/wp-content/uploads/{0}/{1}/PERFORMANCE-MENSAL_MERCADO.xls'.format(
+        y, m)
 
     try:
         df_aco = pd.read_excel(url, skiprows=6)
@@ -429,21 +432,21 @@ def dw_acobrasil(y='2020',m='02'):
         return None
 
     # data cleaning
-    df_aco.iloc[1,0] = 'Mês'
+    df_aco.iloc[1, 0] = 'Mês'
 
     # drop null lines
-    inds = df_aco.iloc[:,0].dropna().index
+    inds = df_aco.iloc[:, 0].dropna().index
     df_aco = df_aco.loc[inds]
 
     # transpose
     df_aco = df_aco.T
-    df_aco.columns = df_aco.iloc[0,:]
-    df_aco = df_aco.iloc[1:,:]
+    df_aco.columns = df_aco.iloc[0, :]
+    df_aco = df_aco.iloc[1:, :]
     df_aco['ESPECIFICAÇÃO'] = df_aco['ESPECIFICAÇÃO'].ffill()
     df_aco['Data'] = df_aco['Mês'].str.lower()+"/"+df_aco['ESPECIFICAÇÃO']
 
     # select columns
-    df_aco = df_aco.iloc[:,2:]
+    df_aco = df_aco.iloc[:, 2:]
 
     # remove remaining nulls
     df_aco.dropna(axis=0, subset=['Data'], inplace=True)

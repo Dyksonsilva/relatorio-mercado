@@ -4,10 +4,7 @@
 # Load ETL scripts from datasets.py to Postgres database
 
 import datasets
-import os
-import pandas as pd
-import pymongo
-from db_interface import *
+from db_interface import db_connect, write_mongo
 
 # establish connection
 cl = db_connect()
