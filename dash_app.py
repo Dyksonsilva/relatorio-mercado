@@ -193,7 +193,22 @@ body = dbc.Container([
             dcc.Markdown(texts.pmc),
         ]),
         dbc.Col([
-            dcc.Graph(id='gr-pmc')
+                dcc.Dropdown(
+                    id='drop-pmc-filt',
+                    options=[{'label': i, 'value': i} for i in cl.ibge.ibge.find(
+                        {'d2n': {'$regex': 'comércio'}}).distinct('d2n')],
+                    value='Índice de volume de vendas no comércio varejista ampliado',
+                    clearable=False
+                ),
+                dcc.Dropdown(
+                    id='drop-pmc-grupo',
+                    options=[{'label': i, 'value': i} for i in cl.ibge.ibge.find(
+                        {'d2n': {'$regex': 'comércio'}}).distinct('d4n')],
+                    value=['Variação mensal (base: igual mês do ano anterior)'],
+                    multi=True,
+                    clearable=False
+                ),
+                dcc.Graph(id='gr-pmc')
         ]),
     ]),
     # Dados de serviços
@@ -203,7 +218,22 @@ body = dbc.Container([
             dcc.Markdown(texts.pms),
         ]),
         dbc.Col([
-            dcc.Graph(id='gr-pms')
+                dcc.Dropdown(
+                    id='drop-pms-filt',
+                    options=[{'label': i, 'value': i} for i in cl.ibge.ibge.find(
+                        {'d2n': {'$regex': 'serviço'}}).distinct('d2n')],
+                    value='Índice de receita nominal de serviços',
+                    clearable=False
+                ),
+                dcc.Dropdown(
+                    id='drop-pms-grupo',
+                    options=[{'label': i, 'value': i} for i in cl.ibge.ibge.find(
+                        {'d2n': {'$regex': 'serviço'}}).distinct('d4n')],
+                    value=['Variação mensal (base: igual mês do ano anterior)'],
+                    multi=True,
+                    clearable=False
+                ),
+                dcc.Graph(id='gr-pms')
         ]),
     ]),
     # Preços ao produtor
@@ -213,7 +243,22 @@ body = dbc.Container([
             dcc.Markdown(texts.pimpf),
         ]),
         dbc.Col([
-            dcc.Graph(id='gr-pimpf')
+                dcc.Dropdown(
+                    id='drop-pimpf-filt',
+                    options=[{'label': i, 'value': i} for i in cl.ibge.ibge.find(
+                        {'d2n': {'$regex': 'IPP'}}).distinct('d2n')],
+                    value='IPP - Variação mês/mesmo mês do ano anterior (M/M-12)',
+                    clearable=False
+                ),
+                dcc.Dropdown(
+                    id='drop-pimpf-grupo',
+                    options=[{'label': i, 'value': i} for i in cl.ibge.ibge.find(
+                        {'d2n': {'$regex': 'IPP'}}).distinct('d4n')],
+                    value=['Indústria Geral'],
+                    multi=True,
+                    clearable=False
+                ),
+                dcc.Graph(id='gr-pimpf')
         ])
     ]),
     # Construção civil
