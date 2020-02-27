@@ -29,16 +29,17 @@ def db_connect():
 # auxiliary function
 
 
-def read_mongo(coll, query=None):
+def read_mongo(coll, query, projection=None):
     '''
     Function to read a MongoDB collection as a pandas DataFrame.
     :param coll: a collection.
     :param query: a dict
+    :param projection: a dict
     '''
-    if query is None:
-        df = pd.DataFrame(list(coll.find())).reset_index()
-    else:
+    if projection is None:
         df = pd.DataFrame(list(coll.find(query))).reset_index()
+    else:
+        df = pd.DataFrame(list(coll.find(query, projection))).reset_index()
 
     return df
 

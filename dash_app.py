@@ -15,7 +15,7 @@ import plotly.graph_objects as go
 from dash.dependencies import Input, Output
 
 import texts
-from db_interface import *
+from db_interface import db_connect, read_mongo
 
 # app declaration
 app = dash.Dash(__name__, external_stylesheets=[dbc.themes.YETI])
@@ -23,6 +23,105 @@ server = app.server
 
 # establish database connection
 cl = db_connect()
+
+# static graphs ===============================================================
+
+
+def gr_ptax():
+    df = read_mongo(cl.bacen.ptax, {})
+
+    fig = px.line(df[df.data > '2010-01-01'].reset_index(),
+                  x='data', y='valor')
+    fig.update_layout(showlegend=False,
+                      xaxis_title='data',
+                      yaxis_title='Cotação (R$/1 US$)',
+                      title='Dólar PTAX Compra',
+                      **gr_styles)
+
+    return fig
+
+# commodities
+
+
+def gr_comb_intl():
+    df = read_mongo(cl.prices.oil, {})
+
+    fig = go.Figure()
+    fig.add_trace(go.Scatter(
+        x=df['date'], y=df['oil_wti'], name='Barril WTI'))
+    fig.add_trace(go.Scatter(
+        x=df['date'], y=df['oil_nymex'], name='Barril NYMEX'))
+    fig.update_layout(showlegend=False,
+                      xaxis_title='data',
+                      yaxis_title='US$/barril',
+                      title='Cotações internacionais do petróleo',
+                      **gr_styles)
+    return fig
+
+
+def gr_comb_nac():
+    qry = f'SELECT data_inicial, produto, AVG(preço_médio_revenda) as media '\
+        'FROM dw_anp '\
+        'GROUP BY data_inicial, produto '\
+        'ORDER BY data_inicial ASC;'
+    df = pd.read_sql_query(qry, con=db)
+
+    fig = px.line(df, x='data_inicial', y='media', color='produto')
+    fig.update_layout(showlegend=False,
+                      xaxis_title='data',
+                      yaxis_title='R$/l, R$/13kg (GLP)',
+                      title='Preços médios de revenda',
+                      **gr_styles)
+    return fig
+
+# TODO: pivot table
+
+
+def gr_graos():
+    df = read_mongo(cl.quandl.quandl, {
+                    'index': 1, 'quandl_corn': 1,  'quandl_cotton': 1,  'quandl_soybeans': 1})
+    df = pd.melt(df, id_vars='index')
+
+    fig = px.line(df, x='data', y='value', color='variable')
+    fig.update_layout(showlegend=False, **gr_styles)
+    return fig
+
+# TODO: pivot table
+
+
+def gr_animais():
+    df = read_mongo(cl.quandl.quandl, {
+                    'index': 1, 'cepea_bezerro': 1,  'cepea_porco': 1})
+    df = pd.melt(df, id_vars='index')
+
+    fig = px.line(df, x='data', y='value', color='variable')
+    fig.update_layout(showlegend=False, **gr_styles)
+    return fig
+
+# TODO: pivot table
+
+
+def gr_metais():
+    df = read_mongo(cl.quandl.quandl, {
+                    'index': 1, 'quandl_steel_china': 1,  'quandl_steel_us': 1})
+    df = pd.melt(df, id_vars='index')
+
+    fig = px.line(df, x='data', y='value',
+                  color='variable')
+    fig.update_layout(showlegend=False, **gr_styles)
+    return fig
+
+
+def gr_gasnat():
+    df = read_mongo(cl.quandl.quandl, {
+                    'index': 1, 'quandl_nat_gas_us': 1,  'quandl_nat_gas_uk': 1})
+    df = pd.melt(df, id_vars='index')
+
+    fig = px.line(df, x='data', y='value',
+                  color='variable')
+    fig.update_layout(showlegend=False, **gr_styles)
+    return fig
+
 
 # layout ======================================================================
 # navbar
@@ -94,7 +193,7 @@ body = dbc.Container([
             dcc.Markdown(texts.pmc),
         ]),
         dbc.Col([
-            # dcc.Graph(figure=gr_pmc())
+            dcc.Graph(id='gr-pmc')
         ]),
     ]),
     # Dados de serviços
@@ -104,7 +203,7 @@ body = dbc.Container([
             dcc.Markdown(texts.pms),
         ]),
         dbc.Col([
-            # dcc.Graph(figure=gr_pms())
+            dcc.Graph(id='gr-pms')
         ]),
     ]),
     # Preços ao produtor
@@ -114,7 +213,7 @@ body = dbc.Container([
             dcc.Markdown(texts.pimpf),
         ]),
         dbc.Col([
-            # dcc.Graph(figure=gr_pimpf())
+            dcc.Graph(id='gr-pimpf')
         ])
     ]),
     # Construção civil
@@ -124,7 +223,7 @@ body = dbc.Container([
             dcc.Markdown(texts.constr),
         ]),
         dbc.Col([
-            # # dcc.Graph(figure=gr_pimpf())
+            # dcc.Graph(id='gr-sinapi')
         ])
     ]),
 
@@ -136,7 +235,14 @@ body = dbc.Container([
                 dcc.Markdown(texts.focus)
             ]),
             dbc.Col([
-                # # dcc.Graph(figure=gr_focus())
+                dcc.Dropdown(
+                    id='drop-focus-filt',
+                    options=[{'label': i, 'value': i}
+                             for i in cl.bacen.focus.distinct('indicador')],
+                    value='PIB Total',
+                    clearable=False
+                ),
+                dcc.Graph(id='gr-focus')
             ])
             ]),
     # Dólar PTAX
@@ -146,7 +252,7 @@ body = dbc.Container([
             dcc.Markdown(texts.ptax),
         ]),
         dbc.Col([
-            # # dcc.Graph(figure=gr_ptax())
+            # dcc.Graph(figure=gr_ptax())
         ]),
     ]),
     # Dados de commodities ------------------------------------------
@@ -253,163 +359,87 @@ def gr_ipca(filt, grupo):
     return fig
 
 
-def gr_pimpf():
-    df = read_mongo(cl.ibge.ibge, {'d2n': {'$regex': 'IPP'}})
+@app.callback(
+    Output('gr-pimpf', 'figure'),
+    [Input('drop-pimpf-filt', 'value'),
+     Input('drop-pimpf-grupo', 'value')])
+def gr_pimpf(filt, grupo):
+    df = read_mongo(
+        cl.ibge.ibge, {'d2n': {'$regex': str(filt)}})
+    df = df[df['d4n'].isin(list(grupo))]
 
-    fig = px.line(df, x='d3c', y='v', color='d2n')
+    # format database for plotting
+    df = df[['d3c', 'd4n', 'd1n', 'v']].groupby(
+        ['d3c', 'd4n']).mean().reset_index()
+
+    fig = px.line(df, x='d3c', y='v', color='d4n')
     fig.update_layout(showlegend=False,
                       xaxis_title='data',
                       yaxis_title='Variação %',
-                      title='Variações do IPP',
+                      title='Variações do IPCA',
                       **gr_styles)
     return fig
 
 
-def gr_pmc():
-    df = read_mongo(cl.ibge.ibge, {'d2n': {'$regex': 'comércio'}})
+@app.callback(
+    Output('gr-pmc', 'figure'),
+    [Input('drop-pmc-filt', 'value'),
+     Input('drop-pmc-grupo', 'value')])
+def gr_pmc(filt, grupo):
+    df = read_mongo(
+        cl.ibge.ibge, {'d2n': {'$regex': str(filt)}})
+    df = df[df['d4n'].isin(list(grupo))]
 
-    fig = px.line(df, x='d3c', y='v', color='d2n')
+    # format database for plotting
+    df = df[['d3c', 'd4n', 'd1n', 'v']].groupby(
+        ['d3c', 'd4n']).mean().reset_index()
+
+    fig = px.line(df, x='d3c', y='v', color='d4n')
     fig.update_layout(showlegend=False,
                       xaxis_title='data',
                       yaxis_title='Variação %',
-                      title='Variações dos índices de comércio',
+                      title='Variações do IPCA',
                       **gr_styles)
     return fig
 
 
-def gr_pms():
-    df = read_mongo(cl.ibge.ibge, {'d2n': {'$regex': 'serviços'}})
+@app.callback(
+    Output('gr-pms', 'figure'),
+    [Input('drop-pms-filt', 'value'),
+     Input('drop-pms-grupo', 'value')])
+def gr_pms(filt, grupo):
+    df = read_mongo(
+        cl.ibge.ibge, {'d2n': {'$regex': str(filt)}})
+    df = df[df['d4n'].isin(list(grupo))]
 
-    fig = px.line(df, x='d3c', y='v', color='d2n')
+    # format database for plotting
+    df = df[['d3c', 'd4n', 'd1n', 'v']].groupby(
+        ['d3c', 'd4n']).mean().reset_index()
+
+    fig = px.line(df, x='d3c', y='v', color='d4n')
     fig.update_layout(showlegend=False,
                       xaxis_title='data',
                       yaxis_title='Variação %',
-                      title='Variações dos índices de serviços',
+                      title='Variações do IPCA',
                       **gr_styles)
     return fig
+
 
 # banco central
 
-
-def gr_focus():
-    df = read_mongo(cl.bacen.focus, {'indicador': {'$regex': 'PIB Total'}})
+@app.callback(
+    Output('gr-focus', 'figure'),
+    [Input('drop-focus-filt', 'value')])
+def gr_focus(filt):
+    df = read_mongo(cl.bacen.focus, {'indicador': {'$regex': str(filt)}})
 
     fig = px.line(df, x='data', y='mediana',
-                  color='projecao', error_y='desviopadrao')
+                  color='datareferencia', error_y='desviopadrao')
     fig.update_layout(showlegend=False,
                       xaxis_title='data',
                       yaxis_title='valor esperado',
                       title='Expectativas de mercado',
                       **gr_styles)
-    return fig
-
-
-def gr_ptax():
-    df = read_mongo(cl.bacen.ptax)
-
-    fig = px.line(df[df.data > '2010-01-01'].reset_index(),
-                  x='data', y='valor')
-    fig.update_layout(showlegend=False,
-                      xaxis_title='data',
-                      yaxis_title='Cotação (R$/1 US$)',
-                      title='Dólar PTAX Compra',
-                      **gr_styles)
-
-    return fig
-
-# commodities
-
-
-def gr_comb_intl():
-    qry = f'SELECT * '\
-        'FROM dw_oil '\
-        'ORDER BY date ASC;'
-    df = pd.read_sql_query(qry, con=db)
-
-    fig = go.Figure()
-    fig.add_trace(go.Scatter(
-        x=df['date'], y=df['oil_wti'], name='Barril WTI'))
-    fig.add_trace(go.Scatter(
-        x=df['date'], y=df['oil_nymex'], name='Barril NYMEX'))
-    fig.update_layout(showlegend=False,
-                      xaxis_title='data',
-                      yaxis_title='US$/barril',
-                      title='Cotações internacionais do petróleo',
-                      **gr_styles)
-    return fig
-
-
-def gr_comb_nac():
-    qry = f'SELECT data_inicial, produto, AVG(preço_médio_revenda) as media '\
-        'FROM dw_anp '\
-        'GROUP BY data_inicial, produto '\
-        'ORDER BY data_inicial ASC;'
-    df = pd.read_sql_query(qry, con=db)
-
-    fig = px.line(df, x='data_inicial', y='media', color='produto')
-    fig.update_layout(showlegend=False,
-                      xaxis_title='data',
-                      yaxis_title='R$/l, R$/13kg (GLP)',
-                      title='Preços médios de revenda',
-                      **gr_styles)
-    return fig
-
-# TODO: pivot table
-
-
-def gr_graos():
-    qry = f'SELECT index as data, quandl_wheat, quandl_soybeans, quandl_cotton, quandl_corn, cepea_trigo_parana, cepea_soja '\
-        'FROM dw_quandl '\
-        'ORDER BY data ASC;'
-    df = pd.read_sql_query(qry, con=db)
-
-    df = pd.melt(df, id_vars='data')
-
-    fig = px.line(df, x='data', y='value', color='variable')
-    fig.update_layout(showlegend=False, **gr_styles)
-    return fig
-
-# TODO: pivot table
-
-
-def gr_animais():
-    qry = f'SELECT index as data, cepea_bezerro, cepea_porco '\
-        'FROM dw_quandl '\
-        'ORDER BY data ASC;'
-    df = pd.read_sql_query(qry, con=db)
-    df = pd.melt(df, id_vars='data')
-
-    fig = px.line(df, x='data', y='value', color='variable')
-    fig.update_layout(showlegend=False, **gr_styles)
-    return fig
-
-# TODO: pivot table
-
-
-def gr_metais():
-    qry = f'SELECT index as data, quandl_steel_china, quandl_steel_us '\
-        'FROM dw_quandl '\
-        'ORDER BY data ASC;'
-    df = pd.read_sql_query(qry, con=db)
-    df = pd.melt(df, id_vars='data')
-
-    fig = px.line(df, x='data', y='value',
-                  color='variable')
-    fig.update_layout(showlegend=False, **gr_styles)
-    return fig
-
-
-def gr_gasnat():
-    qry = f'SELECT index as data, quandl_nat_gas_us, quandl_nat_gas_uk '\
-        'FROM dw_quandl '\
-        'ORDER BY data ASC;'
-    df = pd.read_sql_query(qry, con=db)
-
-    df = pd.melt(df, id_vars='data')
-
-    fig = px.line(df, x='data', y='value',
-                  color='variable')
-    fig.update_layout(showlegend=False, **gr_styles)
     return fig
 
 
