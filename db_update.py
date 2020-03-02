@@ -18,7 +18,7 @@ write_mongo(df_ibge, cl.ibge.ibge)
 df_quandl = datasets.dw_quandl()
 write_mongo(df_quandl, cl.quandl.quandl)
 
-df_combustiveis = datasets.dw_combustiveis()
+df_combustiveis = datasets.dw_anp()
 write_mongo(df_combustiveis[0], cl.prices.anp)
 write_mongo(df_combustiveis[1], cl.prices.oil)
 

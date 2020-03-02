@@ -102,7 +102,7 @@ def dw_cme():
 
 
 @retry(ConnectionError, tries=5, delay=1)
-def dw_combustiveis():
+def dw_anp():
     '''
     Load fossil fuels data
     :return: A :class:`pandas.DataFrame`.
@@ -157,6 +157,49 @@ def dw_combustiveis():
     df_oil['date'] = pd.to_datetime(df_oil['date'], format='%Y-%m-%d')
 
     return df_anp, df_oil
+
+
+@retry(ConnectionError, tries=5, delay=1)
+def dw_anp_import():
+
+    # load dict w/ links
+    with open('links_dados.json', 'r') as f:
+        links = f.read()
+        links_f = json.loads(str(links))
+
+    url = links_f['ANP PPI']
+    xls = pd.ExcelFile(url)
+
+    # sheet 0: Gasolina
+    # sheet 1: QAV
+    # sheet 2: Diesel
+    try:
+        df1 = pd.read_excel(xls, sheet_name=0, skiprows=2, usecols='B:R')
+        df2 = pd.read_excel(xls, sheet_name=1, skiprows=2, usecols='B:R')
+        df3 = pd.read_excel(xls, sheet_name=2, skiprows=2, usecols='B:R')
+    except:
+        return None
+
+    def prep_data(df, label):
+        # data preparation helper function
+        df['Data'] = df['Data'].str.slice(stop=10)
+        df['Data'] = pd.to_datetime(df['Data'])
+        df = df.dropna(subset=['Data'], axis=0)
+
+        df = pd.melt(df, id_vars='Data')
+        df['Combustivel'] = label
+        return df
+
+    df1 = prep_data(df1, 'Gasolina')
+    df2 = prep_data(df2, 'QAV')
+    df3 = prep_data(df3, 'Diesel')
+
+    df = pd.concat([df1, df2, df3])
+    df.columns = ['Data', 'Local', 'Valor', 'Combustivel']
+
+    df_anp_import = pd.pivot_table(
+        df, index=['Data', 'Local'], columns=['Combustivel'])
+    return df_anp_import
 
 
 @retry(ConnectionError, tries=5, delay=1)

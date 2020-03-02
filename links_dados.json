@@ -30,6 +30,7 @@
     "IBGE PMS": "http://api.sidra.ibge.gov.br/values/t/6442/n3/all/v/all/p/last%2028/c11046/90668,90670/d/v8676%201,v8677%201?formato=json",
     "IBGE PIMPF": "http://api.sidra.ibge.gov.br/values/t/3653/n3/all/v/3139,3141/p/last%2030/c544/129314,129315,129316/d/v3139%201,v3141%201?formato=json",
     "ANP Semanal": "http://www.anp.gov.br/images/Precos/Semanal2013/SEMANAL_MUNICIPIOS-2019.xlsx",
+    "ANP PPI": "http://www.anp.gov.br/arquivos/precos/precificacao/novo/ppi-desde-set-2019.xlsx",
     "Oil NYMEX": "https://www.quandl.com/api/v3/datasets/CHRIS/CME_UB1.csv?api_key={0}&start_date=2010-01-01&column_index=6",
     "Oil WTI": "https://www.quandl.com/api/v3/datasets/CHRIS/CME_CS1.csv?api_key={0}&start_date=2010-01-01&column_index=6",
     "BACEN FOCUS": "https://olinda.bcb.gov.br/olinda/servico/Expectativas/versao/v1/odata/ExpectativasMercadoAnuais?$filter=Data%20gt%20'2019-01-01'&$orderby=Data%20asc&$format=text/csv&$select=Indicador,IndicadorDetalhe,Data,DataReferencia,Mediana,DesvioPadrao",
