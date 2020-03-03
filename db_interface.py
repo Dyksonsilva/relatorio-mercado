@@ -29,7 +29,7 @@ def db_connect():
 # auxiliary function
 
 
-def read_mongo(coll, query, projection=None):
+def read_mongo(coll, query={}, projection={'_id': 0}):
     '''
     Function to read a MongoDB collection as a pandas DataFrame.
     :param coll: a collection.

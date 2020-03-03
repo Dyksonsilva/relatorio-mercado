@@ -372,6 +372,7 @@ def dw_quandl():
     df_quandl.reset_index(inplace=True)
 
     df_quandl.columns = fixnames(df_quandl.columns)
+    df_quandl['index'] = pd.to_datetime(df_quandl['index'])
 
     return df_quandl
 

@@ -37,9 +37,10 @@ gr_styles = {'height': 400,
 
 
 def gr_ptax():
-    df = read_mongo(cl.bacen.ptax, {})
+    df = read_mongo(cl.bacen.ptax)
+    df['data'] = pd.to_datetime(df['data'])
 
-    fig = px.line(df[df.data > '2010-01-01'].reset_index(),
+    fig = px.line(df[df.data > '2010-01-01'],
                   x='data', y='valor')
     fig.update_layout(showlegend=False,
                       xaxis_title='data',
@@ -53,7 +54,7 @@ def gr_ptax():
 
 
 def gr_comb_intl():
-    df = read_mongo(cl.prices.oil, {})
+    df = read_mongo(cl.prices.oil)
 
     fig = go.Figure()
     fig.add_trace(go.Scatter(
@@ -67,31 +68,15 @@ def gr_comb_intl():
                       **gr_styles)
     return fig
 
-
-def gr_comb_nac():
-    qry = f'SELECT data_inicial, produto, AVG(preço_médio_revenda) as media '\
-        'FROM dw_anp '\
-        'GROUP BY data_inicial, produto '\
-        'ORDER BY data_inicial ASC;'
-    df = pd.read_sql_query(qry, con=db)
-
-    fig = px.line(df, x='data_inicial', y='media', color='produto')
-    fig.update_layout(showlegend=False,
-                      xaxis_title='data',
-                      yaxis_title='R$/l, R$/13kg (GLP)',
-                      title='Preços médios de revenda',
-                      **gr_styles)
-    return fig
-
 # TODO: pivot table
 
 
 def gr_graos():
-    df = read_mongo(cl.quandl.quandl, {
-                    'index': 1, 'quandl_corn': 1,  'quandl_cotton': 1,  'quandl_soybeans': 1})
+    df = read_mongo(cl.quandl.quandl, projection={
+                    '_id': 0, 'index': 1, 'quandl_corn': 1,  'quandl_cotton': 1,  'quandl_soybeans': 1})
     df = pd.melt(df, id_vars='index')
 
-    fig = px.line(df, x='data', y='value', color='variable')
+    fig = px.line(df, x='index', y='value', color='variable')
     fig.update_layout(showlegend=False, **gr_styles)
     return fig
 
@@ -99,11 +84,11 @@ def gr_graos():
 
 
 def gr_animais():
-    df = read_mongo(cl.quandl.quandl, {
-                    'index': 1, 'cepea_bezerro': 1,  'cepea_porco': 1})
+    df = read_mongo(cl.quandl.quandl, projection={
+                    '_id': 0, 'index': 1, 'cepea_bezerro': 1,  'cepea_porco': 1})
     df = pd.melt(df, id_vars='index')
 
-    fig = px.line(df, x='data', y='value', color='variable')
+    fig = px.line(df, x='index', y='value', color='variable')
     fig.update_layout(showlegend=False, **gr_styles)
     return fig
 
@@ -111,8 +96,8 @@ def gr_animais():
 
 
 def gr_metais():
-    df = read_mongo(cl.quandl.quandl, query={}, projection={
-                    'index': 1, 'quandl_steel_china': 1,  'quandl_steel_us': 1})
+    df = read_mongo(cl.quandl.quandl, projection={
+                    '_id': 0, 'index': 1, 'quandl_steel_china': 1,  'quandl_steel_us': 1})
     df = pd.melt(df, id_vars='index')
 
     fig = px.line(df, x='index', y='value',
@@ -122,8 +107,8 @@ def gr_metais():
 
 
 def gr_gasnat():
-    df = read_mongo(cl.quandl.quandl, {
-                    'index': 1, 'quandl_nat_gas_us': 1,  'quandl_nat_gas_uk': 1})
+    df = read_mongo(cl.quandl.quandl, projection={
+                    '_id': 0, 'index': 1, 'quandl_nat_gas_us': 1,  'quandl_nat_gas_uk': 1})
     df = pd.melt(df, id_vars='index')
 
     fig = px.line(df, x='index', y='value',
@@ -136,8 +121,9 @@ def gr_gasnat():
 # navbar
 navbar = dbc.NavbarSimple(
     children=[
-        html.Img('assets/slc_white.png', height='30px'),
-        dbc.NavItem(dbc.NavLink("Contato", href="mailto:angelo.salton@slcagricola.com.br?subject=Relatório%20de%20Mercado%20Suprimentos")),
+        html.Img('assets/slc_white.png', height='40px'),
+        dbc.NavItem(dbc.NavLink(
+            "Contato", href="mailto:angelo.salton@slcagricola.com.br?subject=Relatório%20de%20Mercado%20Suprimentos")),
         dbc.DropdownMenu(
             nav=True,
             in_navbar=True,
@@ -160,7 +146,8 @@ navbar = dbc.NavbarSimple(
 # structure
 body = dbc.Container([
     # Ticker TradingView
-    html.Iframe(srcDoc=external.ticker_tv, width='100%', style={'border': '0'}),
+    html.Iframe(srcDoc=external.ticker_tv,
+                width='100%', style={'border': '0'}),
     # Notícias ------------------------------------------------------
     html.H1('Notícias'),
     dbc.Row([
@@ -212,12 +199,13 @@ body = dbc.Container([
                     id='drop-pmc-grupo',
                     options=[{'label': i, 'value': i} for i in cl.ibge.ibge.find(
                         {'d2n': {'$regex': 'comércio'}}).distinct('d4n')],
-                    value=['Variação mensal (base: igual mês do ano anterior)'],
+                    value=[
+                        'Variação mensal (base: igual mês do ano anterior)'],
                     multi=True,
                     clearable=False
                 ),
                 dcc.Graph(id='gr-pmc')
-        ]),
+                ]),
     ]),
     # Dados de serviços
     html.H2('Serviços'),
@@ -237,12 +225,13 @@ body = dbc.Container([
                     id='drop-pms-grupo',
                     options=[{'label': i, 'value': i} for i in cl.ibge.ibge.find(
                         {'d2n': {'$regex': 'serviço'}}).distinct('d4n')],
-                    value=['Variação mensal (base: igual mês do ano anterior)'],
+                    value=[
+                        'Variação mensal (base: igual mês do ano anterior)'],
                     multi=True,
                     clearable=False
                 ),
                 dcc.Graph(id='gr-pms')
-        ]),
+                ]),
     ]),
     # Preços ao produtor
     html.H2('Produção'),
@@ -267,7 +256,7 @@ body = dbc.Container([
                     clearable=False
                 ),
                 dcc.Graph(id='gr-pimpf')
-        ])
+                ])
     ]),
     # Construção civil
     html.H2('Construção civil'),
@@ -305,7 +294,7 @@ body = dbc.Container([
             dcc.Markdown(texts.ptax),
         ]),
         dbc.Col([
-            # dcc.Graph(figure=gr_ptax())
+            dcc.Graph(figure=gr_ptax())
         ]),
     ]),
     # Dados de commodities ------------------------------------------
@@ -317,7 +306,7 @@ body = dbc.Container([
             dcc.Markdown(texts.comb_intl),
         ]),
         dbc.Col([
-            # # dcc.Graph(figure=gr_comb_intl())
+            dcc.Graph(figure=gr_comb_intl())
         ]),
     ]),
     dbc.Row([
@@ -325,7 +314,18 @@ body = dbc.Container([
             dcc.Markdown(texts.comb_nac),
         ]),
         dbc.Col([
-            # # dcc.Graph(figure=gr_comb_nac())
+            html.P('Unidade da federação:'),
+            dcc.Dropdown(
+                id='drop-anp-uf',
+                options=[{'label': i, 'value': i}
+                         for i in cl.prices.anp.distinct('estado')],
+                value='SAO PAULO',
+                clearable=False
+            ),
+            html.P('Município:'),
+            dcc.Dropdown(id='drop-anp-cidade'),
+            dcc.Graph(id='gr-anp'),
+            dcc.Graph(id='gr-anp-margem')
         ]),
     ]),
     # Grãos
@@ -335,7 +335,7 @@ body = dbc.Container([
             dcc.Markdown(texts.graos),
         ]),
         dbc.Col([
-            # # dcc.Graph(figure=gr_graos())
+            dcc.Graph(figure=gr_graos())
         ]),
     ]),
     # Animais
@@ -345,7 +345,7 @@ body = dbc.Container([
             dcc.Markdown(texts.animais),
         ]),
         dbc.Col([
-            # # dcc.Graph(figure=gr_animais())
+            dcc.Graph(figure=gr_animais())
         ]),
     ]),
     # Metais
@@ -355,7 +355,7 @@ body = dbc.Container([
             dcc.Markdown(texts.metais)
         ]),
         dbc.Col([
-            # dcc.Graph(figure=gr_metais()),
+            dcc.Graph(figure=gr_metais()),
             html.Img(src='assets/analises/infomet1.png', width='100%')
         ]),
     ]),
@@ -366,12 +366,15 @@ body = dbc.Container([
             dcc.Markdown(texts.gasnat),
         ]),
         dbc.Col([
-            # # dcc.Graph(figure=gr_gasnat())
+            dcc.Graph(figure=gr_gasnat())
         ])
     ]),
+    html.H1('Calendário Econômico'),
+    html.Iframe(srcDoc=external.calendar_tv, width='100%',
+                height='600px', style={'border': '0'}),
     html.Footer([
         dcc.Markdown('Elaboração: [Angelo Salton - Suprimentos SLC Agrícola S.A.](mailto:angelo.salton@slcagricola.com.br?subject=Relatório%20de%20Mercado%20Suprimentos) - Atualizado em {0}'.format(
-        datetime.datetime.now().strftime('%d/%m/%Y, %H:%M'))),
+            datetime.datetime.now().strftime('%d/%m/%Y, %H:%M'))),
     ], style={
         'color': 'white',
         'background-color': 'green'
@@ -384,13 +387,14 @@ app.layout = html.Div([navbar, body])
 
 # plots =======================================================================
 
+
 @app.callback(
     Output('gr-ipca', 'figure'),
     [Input('drop-ipca-filt', 'value'),
      Input('drop-ipca-grupo', 'value')])
 def gr_ipca(filt, grupo):
     df = read_mongo(
-        cl.ibge.ibge, {'d2n': {'$regex': str(filt)}})
+        cl.ibge.ibge, query={'d2n': {'$regex': str(filt)}})
     df = df[df['d4n'].isin(list(grupo))]
 
     # format database for plotting
@@ -412,7 +416,7 @@ def gr_ipca(filt, grupo):
      Input('drop-pimpf-grupo', 'value')])
 def gr_pimpf(filt, grupo):
     df = read_mongo(
-        cl.ibge.ibge, {'d2n': {'$regex': str(filt)}})
+        cl.ibge.ibge, query={'d2n': {'$regex': str(filt)}})
     df = df[df['d4n'].isin(list(grupo))]
 
     # format database for plotting
@@ -434,7 +438,7 @@ def gr_pimpf(filt, grupo):
      Input('drop-pmc-grupo', 'value')])
 def gr_pmc(filt, grupo):
     df = read_mongo(
-        cl.ibge.ibge, {'d2n': {'$regex': str(filt)}})
+        cl.ibge.ibge, query={'d2n': {'$regex': str(filt)}})
     df = df[df['d4n'].isin(list(grupo))]
 
     # format database for plotting
@@ -478,7 +482,8 @@ def gr_pms(filt, grupo):
     Output('gr-focus', 'figure'),
     [Input('drop-focus-filt', 'value')])
 def gr_focus(filt):
-    df = read_mongo(cl.bacen.focus, {'indicador': {'$regex': str(filt)}, 'indicadordetalhe': np.nan})
+    df = read_mongo(cl.bacen.focus, query={'indicador': {
+                    '$regex': str(filt)}, 'indicadordetalhe': np.nan})
 
     fig = px.line(df, x='data', y='mediana',
                   color='datareferencia')
@@ -489,6 +494,65 @@ def gr_focus(filt):
                       **gr_styles)
     return fig
 
+# gráfico combustíveis nacional
+
+
+@app.callback(
+    Output('drop-anp-cidade', 'options'),
+    [Input('drop-anp-uf', 'value')])
+def drop_anp_cidade(options):
+    return [{'label': i, 'value': i} for i in cl.prices.anp.find({'estado': str(options)}).distinct('município')]
+
+
+@app.callback(
+    Output('gr-anp', 'figure'),
+    [Input('drop-anp-uf', 'value'),
+     Input('drop-anp-cidade', 'value')])
+def gr_comb_nac(uf, cidade):
+
+    # match all if no selection
+    cidade_sel = cidade if cidade != None else '.'
+
+    df = read_mongo(cl.prices.anp,
+                    query={'estado': {'$regex': str(uf)}, 'município': {
+                        '$regex': str(cidade_sel)}, 'produto': {'$nin': ['GLP']}},
+                    projection={
+                        'data_inicial': 1, 'produto': 1, 'estado': 1, 'município': 1, 'preço_médio_revenda': 1})
+    df = df.groupby(['data_inicial', 'produto']).mean().reset_index()
+
+    fig = px.line(df, x='data_inicial',
+                  y='preço_médio_revenda', color='produto')
+    fig.update_layout(showlegend=False,
+                      xaxis_title='Data',
+                      yaxis_title='R$/l',
+                      title='Preços médios de revenda',
+                      **gr_styles)
+    return fig
+
+@app.callback(
+    Output('gr-anp-margem', 'figure'),
+    [Input('drop-anp-uf', 'value'),
+     Input('drop-anp-cidade', 'value')])
+def gr_comb_nac_margem(uf, cidade):
+
+    # match all if no selection
+    cidade_sel = cidade if cidade != None else '.'
+
+    df = read_mongo(cl.prices.anp,
+                    query={'estado': {'$regex': str(uf)}, 'município': {
+                        '$regex': str(cidade_sel)}, 'produto': {'$nin': ['GLP']}},
+                    projection={
+                        'data_inicial': 1, 'produto': 1, 'estado': 1, 'município': 1, 'margem_média_revenda': 1})
+    df = df.groupby(['data_inicial', 'produto']).mean().reset_index()
+
+    fig = px.line(df, x='data_inicial',
+                  y='margem_média_revenda', color='produto')
+    fig.update_layout(showlegend=False,
+                      xaxis_title='Data',
+                      yaxis_title='R$/l',
+                      title='Margens médias de revenda',
+                      **gr_styles)
+    return fig
 
 print('Loading OK!')
 
