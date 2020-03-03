@@ -9,6 +9,7 @@ import dash
 import dash_bootstrap_components as dbc
 import dash_core_components as dcc
 import dash_html_components as html
+import numpy as np
 import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
@@ -25,6 +26,13 @@ server = app.server
 cl = db_connect()
 
 # static graphs ===============================================================
+# layout options
+gr_styles = {'height': 400,
+             'width': 500,
+             'template': 'plotly_white',
+             'font': {
+                 'family': 'Open Sans'
+             }}
 
 
 def gr_ptax():
@@ -102,11 +110,11 @@ def gr_animais():
 
 
 def gr_metais():
-    df = read_mongo(cl.quandl.quandl, {
+    df = read_mongo(cl.quandl.quandl, query={}, projection={
                     'index': 1, 'quandl_steel_china': 1,  'quandl_steel_us': 1})
     df = pd.melt(df, id_vars='index')
 
-    fig = px.line(df, x='data', y='value',
+    fig = px.line(df, x='index', y='value',
                   color='variable')
     fig.update_layout(showlegend=False, **gr_styles)
     return fig
@@ -117,7 +125,7 @@ def gr_gasnat():
                     'index': 1, 'quandl_nat_gas_us': 1,  'quandl_nat_gas_uk': 1})
     df = pd.melt(df, id_vars='index')
 
-    fig = px.line(df, x='data', y='value',
+    fig = px.line(df, x='index', y='value',
                   color='variable')
     fig.update_layout(showlegend=False, **gr_styles)
     return fig
@@ -283,7 +291,7 @@ body = dbc.Container([
                 dcc.Dropdown(
                     id='drop-focus-filt',
                     options=[{'label': i, 'value': i}
-                             for i in cl.bacen.focus.distinct('indicador')],
+                             for i in cl.bacen.focus.find({'indicadordetalhe': np.nan}).distinct('indicador')],
                     value='PIB Total',
                     clearable=False
                 ),
@@ -344,10 +352,11 @@ body = dbc.Container([
     html.H2('Metais'),
     dbc.Row([
         dbc.Col([
-            dcc.Markdown(texts.metais),
+            dcc.Markdown(texts.metais)
         ]),
         dbc.Col([
-            # # dcc.Graph(figure=gr_metais())
+            # dcc.Graph(figure=gr_metais()),
+            html.Img(src='assets/analises/infomet1.png', width='100%')
         ]),
     ]),
     # Gás natural
@@ -373,14 +382,6 @@ body = dbc.Container([
 app.layout = html.Div([navbar, body])
 
 # plots =======================================================================
-# layout options
-gr_styles = {'height': 400,
-             'width': 500,
-             'template': 'plotly_white',
-             'font': {
-                 'family': 'Open Sans'
-             }}
-
 
 @app.callback(
     Output('gr-ipca', 'figure'),
@@ -476,10 +477,10 @@ def gr_pms(filt, grupo):
     Output('gr-focus', 'figure'),
     [Input('drop-focus-filt', 'value')])
 def gr_focus(filt):
-    df = read_mongo(cl.bacen.focus, {'indicador': {'$regex': str(filt)}})
+    df = read_mongo(cl.bacen.focus, {'indicador': {'$regex': str(filt)}, 'indicadordetalhe': np.nan})
 
     fig = px.line(df, x='data', y='mediana',
-                  color='datareferencia', error_y='desviopadrao')
+                  color='datareferencia')
     fig.update_layout(showlegend=False,
                       xaxis_title='data',
                       yaxis_title='valor esperado',
