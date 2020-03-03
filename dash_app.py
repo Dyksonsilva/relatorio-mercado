@@ -16,6 +16,7 @@ import plotly.graph_objects as go
 from dash.dependencies import Input, Output
 
 import texts
+import external
 from db_interface import db_connect, read_mongo
 
 # app declaration
@@ -136,7 +137,7 @@ def gr_gasnat():
 navbar = dbc.NavbarSimple(
     children=[
         html.Img('assets/slc_white.png', height='30px'),
-        dbc.NavItem(dbc.NavLink("Link", href="#")),
+        dbc.NavItem(dbc.NavLink("Contato", href="mailto:angelo.salton@slcagricola.com.br?subject=Relatório%20de%20Mercado%20Suprimentos")),
         dbc.DropdownMenu(
             nav=True,
             in_navbar=True,
@@ -158,9 +159,8 @@ navbar = dbc.NavbarSimple(
 
 # structure
 body = dbc.Container([
-    # Card inicial --------------------------------------------------
-    dcc.Markdown('[Angelo Salton - Suprimentos SLC Agrícola S.A.](mailto:angelo.salton@slcagricola.com.br?subject=Relatório%20de%20Mercado%20Suprimentos) - Atualizado em {0}'.format(
-        datetime.datetime.now().strftime('%d/%m/%Y, %H:%M'))),
+    # Ticker TradingView
+    html.Iframe(srcDoc=external.ticker_tv, width='100%', style={'border': '0'}),
     # Notícias ------------------------------------------------------
     html.H1('Notícias'),
     dbc.Row([
@@ -370,7 +370,8 @@ body = dbc.Container([
         ])
     ]),
     html.Footer([
-        'aaa'
+        dcc.Markdown('Elaboração: [Angelo Salton - Suprimentos SLC Agrícola S.A.](mailto:angelo.salton@slcagricola.com.br?subject=Relatório%20de%20Mercado%20Suprimentos) - Atualizado em {0}'.format(
+        datetime.datetime.now().strftime('%d/%m/%Y, %H:%M'))),
     ], style={
         'color': 'white',
         'background-color': 'green'
