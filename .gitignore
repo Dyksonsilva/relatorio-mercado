@@ -1,5 +1,9 @@
 .vscode
 *.pyc
-connection.txt
 login.txt
 assets/analises/Thumbs.db
+connection.txt
+# Elastic Beanstalk Files
+.elasticbeanstalk/*
+!.elasticbeanstalk/*.cfg.yml
+!.elasticbeanstalk/*.global.yml

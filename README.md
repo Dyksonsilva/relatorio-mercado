@@ -6,7 +6,7 @@ Scripted in Python with [Dash](https://dash.plot.ly/).
 
 ## Structure
 
-The front-end is described in `dash_app.py`, using the Dash framework and [Dash Bootstrap Components](https://dash-bootstrap-components.opensource.faculty.ai/) to help with the styling. The app is hosted on [Heroku](https://heroku.com/), a platform for rapid  web app development, which serves a dynamic web page.
+The front-end is described in `application.py`, using the Dash framework and [Dash Bootstrap Components](https://dash-bootstrap-components.opensource.faculty.ai/) to help with the styling. The app is hosted on [Amazon Web Services](https://aws.amazon.com/pt/elasticbeanstalk/), a platform for rapid  web app development, which serves a dynamic web page.
 
 Market data and statistics are retrieved from the web (in `datasets.py`) and stored (in `db_update.py`) in a [MongoDB cluster](https://cloud.mongodb.com/), to be later queried by the website. A non-relational database was chosen due to greater flexibility.
 

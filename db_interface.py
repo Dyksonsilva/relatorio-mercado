@@ -13,7 +13,7 @@ def db_connect():
     Set connection to database. The credentials are stored in the server's environmental variables.
     '''
     # Heroku
-    MONGODB_URL = os.getenv('MONGODB_URL')
+    MONGODB_URL = os.environ.get('MONGODB_URL')
     cl = pymongo.MongoClient(MONGODB_URL)
 
     # local tests
