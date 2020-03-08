@@ -58,6 +58,10 @@ def dw_bacen():
 
     df_focus.columns = fixnames(df_focus.columns)
 
+    # timestamp
+    df_ptax['updated'] = pd.to_datetime('now')
+    df_focus['updated'] = pd.to_datetime('now')
+
     return df_ptax, df_focus
 
 
@@ -95,6 +99,9 @@ def dw_cme():
     # return summarized table
     # df_cme = df_cme.groupby(['BizDt', 'Sym', 'MatDt', 'PutCall'])[
     # 'SettlePrice'].max().reset_index()
+
+    # timestamp
+    df_cme['updated'] = pd.to_datetime('now')
 
     df_cme.columns = fixnames(df_cme.columns)
 
@@ -156,6 +163,10 @@ def dw_anp():
     df_oil.columns = fixnames(df_oil.columns)
     df_oil['date'] = pd.to_datetime(df_oil['date'], format='%Y-%m-%d')
 
+    # timestamp
+    df_anp['updated'] = pd.to_datetime('now')
+    df_oil['updated'] = pd.to_datetime('now')
+
     return df_anp, df_oil
 
 
@@ -199,6 +210,10 @@ def dw_anp_import():
 
     df_anp_import = pd.pivot_table(
         df, index=['Data', 'Local'], columns=['Combustivel'])
+
+    # timestamp
+    df_anp_import['updated'] = pd.to_datetime('now')
+
     return df_anp_import
 
 
@@ -283,6 +298,9 @@ def dw_ibge():
     # temp = df_ibge.melt(id_vars=['D3C', 'D2N', 'D1N'], value_vars=['V'])
     # df_ibge = temp.groupby(['D3C', 'D2N']).mean().reset_index()
 
+    # timestamp
+    df_ibge['updated'] = pd.to_datetime('now')
+
     df_ibge.columns = fixnames(df_ibge.columns)
 
     return df_ibge
@@ -324,6 +342,9 @@ def dw_noticias():
 
     # select columns
     df_goog = df_goog[['title', 'link', 'pubdate', 'source']]
+
+    # timestamp
+    df_goog['updated'] = pd.to_datetime('now')
 
     return df_goog
 
@@ -371,6 +392,9 @@ def dw_quandl():
     df_quandl = df_quandl.iloc[:, cols]
     df_quandl.reset_index(inplace=True)
 
+    # timestamp
+    df_quandl['updated'] = pd.to_datetime('now')
+
     df_quandl.columns = fixnames(df_quandl.columns)
     df_quandl['index'] = pd.to_datetime(df_quandl['index'])
 
@@ -409,6 +433,9 @@ def dw_scot():
 
     df_scot = df_scot.astype(df_scot_dtypes)
 
+    # timestamp
+    df_scot['updated'] = pd.to_datetime('now')
+
     df_scot.columns = fixnames(df_scot.columns)
 
     return df_scot
@@ -437,6 +464,9 @@ def dw_china():
 
     df_china.columns = fixnames(df_china.columns)
 
+    # timestamp
+    df_china['updated'] = pd.to_datetime('now')
+
     return df_china
 
 
@@ -455,6 +485,9 @@ def dw_fretes():
     df_fretes['Destino'] = df_fretes['Destino']+'/'+df_fretes['UF.1']
 
     df_fretes.drop(['UF', 'UF.1'], axis=1, inplace=True)
+
+    # timestamp
+    df_fretes['updated'] = pd.to_datetime('now')
 
     df_fretes.columns = fixnames(df_fretes.columns)
 
@@ -496,5 +529,8 @@ def dw_acobrasil(y='2020', m='02'):
     df_aco.dropna(axis=0, subset=['Data'], inplace=True)
     df_aco.dropna(axis=1, how='all', inplace=True)
     df_aco.reset_index(drop=True, inplace=True)
+
+    # timestamp
+    df_aco['updated'] = pd.to_datetime('now')
 
     return df_aco
