@@ -26,8 +26,6 @@ def db_connect():
 
     return cl
 
-# auxiliary function
-
 
 def read_mongo(coll, query={}, projection={'_id': 0}):
     '''
@@ -37,9 +35,9 @@ def read_mongo(coll, query={}, projection={'_id': 0}):
     :param projection: a dict
     '''
     if projection is None:
-        df = pd.DataFrame(list(coll.find(query))).reset_index()
+        df = pd.DataFrame(list(coll.find(query)), index=None)
     else:
-        df = pd.DataFrame(list(coll.find(query, projection))).reset_index()
+        df = pd.DataFrame(list(coll.find(query, projection)), index=None)
 
     return df
 
