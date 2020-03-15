@@ -38,10 +38,10 @@ gr_styles = {'height': 400,
 
 def gr_ptax():
     df = read_mongo(cl.bacen.ptax)
-    df['data'] = pd.to_datetime(df['data'])
+    #df['data'] = pd.to_datetime(df['data'])
 
-    fig = px.line(df[df.data > '2010-01-01'],
-                  x='data', y='valor')
+    fig = px.line(df,
+                  x='data', y='valor', labels={'data': 'Data', 'valor': 'Valor'})
     fig.update_layout(showlegend=False,
                       xaxis_title='data',
                       yaxis_title='Cotação (R$/1 US$)',
@@ -529,6 +529,7 @@ def gr_comb_nac(uf, cidade):
                       **gr_styles)
     return fig
 
+
 @app.callback(
     Output('gr-anp-margem', 'figure'),
     [Input('drop-anp-uf', 'value'),
@@ -554,7 +555,8 @@ def gr_comb_nac_margem(uf, cidade):
                       **gr_styles)
     return fig
 
+
 print('Loading OK!')
 
 if __name__ == "__main__":
-    application.run()
+    application.run(debug=True)
