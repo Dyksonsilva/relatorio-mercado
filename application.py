@@ -559,4 +559,4 @@ def gr_comb_nac_margem(uf, cidade):
 print('Loading OK!')
 
 if __name__ == "__main__":
-    application.run(debug=True)
+    application.run()
