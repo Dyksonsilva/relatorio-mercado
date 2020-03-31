@@ -2,4 +2,3 @@
 
 conda activate relatorio-mercado
 python application.py
-
